@@ -6,7 +6,12 @@ public class Tower {
     private int damage;
     private int defense;
 
-    
+    public Tower(String name, int hp, int damage, int defense) {
+        this.name = name;
+        this.hp = hp;
+        this.damage = damage;
+        this.defense = defense;
+    }
 
     public String getName() {
         return this.name;
