@@ -14,4 +14,15 @@ public class Tower {
     private int hp;
     private int damage;
     private int defense;
+    //attack troop
+    public void attackTroop(Troop troop){
+        int dmg = this.damage - troop.getDefense();
+        if(dmg > 0){
+            troop.setHp(troop.getHp() - dmg);
+        }
+    }
+    //check alive
+    public boolean isAlive(){
+        return (this.getHp() > 0) ? true : false;
+    }
 }
