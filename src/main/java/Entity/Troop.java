@@ -23,6 +23,6 @@ public class Troop {
     }
     //check alive
     public boolean isAlive(){
-        return (this.getHp() > 0) ? true : false;
+        return (this.getHp() > 0);
     }
 }
