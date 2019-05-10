@@ -72,7 +72,7 @@ public class Game implements Runnable {
         Troop bisop = new Troop("Bisop", 100, 200, 150);
         Troop rook = new Troop("Rook", 250, 200, 200);
         Troop knight = new Troop("Knight", 200, 300, 150);
-        Troop prince = new Troop("Prince", 500, 400, 300);
+        Troop prince = new Troop("Prince", 500, 400, 200);
         listOfTower.add(guard);
         listOfTower.add(king);
         listOfTroop.add(pawn);
@@ -91,13 +91,24 @@ public class Game implements Runnable {
             Troop t = listOfTroop.get(number);
             while (t.isAlive()) {
                 System.out.println("Turn " + turn);
-                guard.attackTroop(t);
+                if (guard.isAlive())
+                    guard.attackTroop(t);
+                else if (king.isAlive())
+                    king.attackTroop(t);
+                else
+                    running = false;
                 listOfTroop = checkAlive(listOfTroop);
                 if (listOfTroop.isEmpty()) {
                     running = false;
                 }
-                t.attackTower(guard);
-
+                if (t.isAlive()) {
+                    if (guard.isAlive())
+                        t.attackTower(guard);
+                    else if (king.isAlive())
+                        t.attackTower(king);
+                    else
+                        running = false;
+                }
                 turn++;
             }
 

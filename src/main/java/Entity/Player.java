@@ -3,19 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package s90805;
+package Entity;
 
 /**
  *
- * @author Kuro
+ * @author TGMaster
  */
-public class Test {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        Game game = new Game();
-    }
-
+public class Player {
+    private String username;
+    private String password;
+    
+    //TODO
+    private String mana;
 }
