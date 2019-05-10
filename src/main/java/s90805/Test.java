@@ -22,47 +22,36 @@ public class Test {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        Tower guard = new Tower("Guard", 1000, 300, 100);
-        Tower king = new Tower("King", 2000, 500, 300);
-        Troop pawn = new Troop("Pawn", 50, 150, 100);
-        Troop bisop = new Troop("Bisop", 100, 200, 150);
-        Troop rook = new Troop("Rook", 250, 200, 200);
-        Troop knight = new Troop("Knight", 200, 300, 150);
-        Troop prince = new Troop("Prince", 500, 400, 300);
-        List<Tower> listOfTower = new ArrayList<Tower>();
-        listOfTower.add(guard);
-        listOfTower.add(king);
-        List<Troop> listOfTroop = new ArrayList<Troop>();
-        listOfTroop.add(pawn);
-        listOfTroop.add(bisop);
-        listOfTroop.add(rook);
-        listOfTroop.add(knight);
-        listOfTroop.add(prince);
-        Random rand = new Random();
-        //System.out.println(listOfTroop.size()); 
-        int turn = 0;
-        while (!listOfTroop.isEmpty()) {
-            System.out.println("Turn " + turn);
-            king.attackTroop(listOfTroop.get(rand.nextInt(listOfTroop.size())));
-            listOfTroop = checkAlive(listOfTroop);
-            for (Troop t : listOfTroop) {
-                t.attackTower(guard);
-            }
-            turn++;
-        }
-    }
-
-    static List<Troop> checkAlive(List<Troop> listOfTroop) {
-        Iterator<Troop> iterator = listOfTroop.iterator();
-        while (iterator.hasNext()) {
-            Troop t = iterator.next();
-            if (!t.isAlive()) {
-                System.out.println(t.getName() + " is dead ");
-                iterator.remove();
-            }
-            // System.out.print(listOfTroop);
-        }
-        return listOfTroop;
+//        Tower guard = new Tower("Guard", 1000, 300, 100);
+//        Tower king = new Tower("King", 2000, 500, 300);
+//        Troop pawn = new Troop("Pawn", 50, 150, 100);
+//        Troop bisop = new Troop("Bisop", 100, 200, 150);
+//        Troop rook = new Troop("Rook", 250, 200, 200);
+//        Troop knight = new Troop("Knight", 200, 300, 150);
+//        Troop prince = new Troop("Prince", 500, 400, 300);
+//        List<Tower> listOfTower = new ArrayList<Tower>();
+//        listOfTower.add(guard);
+//        listOfTower.add(king);
+//        List<Troop> listOfTroop = new ArrayList<Troop>();
+//        listOfTroop.add(pawn);
+//        listOfTroop.add(bisop);
+//        listOfTroop.add(rook);
+//        listOfTroop.add(knight);
+//        listOfTroop.add(prince);
+//        Random rand = new Random();
+//        //System.out.println(listOfTroop.size()); 
+//        int turn = 0;
+//        while (!listOfTroop.isEmpty()) {
+//            System.out.println("Turn " + turn);
+//            king.attackTroop(listOfTroop.get(rand.nextInt(listOfTroop.size())));
+//            listOfTroop = checkAlive(listOfTroop);
+//            for (Troop t : listOfTroop) {
+//                t.attackTower(guard);
+//            }
+//            turn++;
+//        }
+        
+        Game game = new Game();
     }
 
 }
