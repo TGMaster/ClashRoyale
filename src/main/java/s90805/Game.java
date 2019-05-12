@@ -29,11 +29,7 @@ public class Game implements Runnable {
 	private int turn = 1;
 
     List<Troop> listOfTroop = new ArrayList<Troop>(); //contain all information troops
-    <<<<<<< HEAD
     List<Troop> listOfTroopTurn = new ArrayList<Troop>(); //contain player's troops in turn (alive troops)
-    =======
-    List<Troop> listOfTroopTurn = new ArrayList<Troop>(); //contain player's troops in turn
-    >>>>>>> d47f0c3e0c22973ee41184832f40749b48716d47
     List<Tower> listOfTower = new ArrayList<Tower>(); //contain all information about towers
     //List<Tower> listOfTowerTurn = new ArrayList<Tower>(); //contain player's tower in turn
     List<Troop> troopsForChoice = new ArrayList<Troop>(); // contain 3 different troops at anytime for player choose to spawn
