@@ -8,10 +8,12 @@ package s90805;
 import Entity.Tower;
 import Entity.Troop;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  *
@@ -21,12 +23,16 @@ public class Game implements Runnable {
 
     private Thread thread;
     private boolean running;
+    private boolean isWin = false;
     private final int TICKS = 30;
     private final int TARGET_TIME = 1000 / TICKS;
-    private int turn = 0;
+    private int turn = 1;
 
-    List<Troop> listOfTroop = new ArrayList<Troop>();
-    List<Tower> listOfTower = new ArrayList<Tower>();
+    List<Troop> listOfTroop = new ArrayList<Troop>(); //contain all information troops
+    List<Troop> listOfTroopTurn = new ArrayList<Troop>(); //contain player's troops in turn
+    List<Tower> listOfTower = new ArrayList<Tower>(); //contain all information about towers
+    //List<Tower> listOfTowerTurn = new ArrayList<Tower>(); //contain player's tower in turn
+    List<Troop> troopsForChoice = new ArrayList<Troop>(); // contain 3 different troops at anytime for player choose to spawn
     Tower guard, king;
     Random rand = new Random();
     private Scanner in;
@@ -84,30 +90,35 @@ public class Game implements Runnable {
     }
 
     private void update() {
-        if (!listOfTroop.isEmpty()) {
-            System.out.println("List: " + listOfTroop.toString());
-            System.out.print("Input: ");
+        if (!isWin) { //should replace win/loose status
+            troopsForChoice = iniTroopsChoice(listOfTroop);
+            //System.out.println("List: " + listOfTroop.toString());
+            System.out.print("Choose Troop to spawn : ");
             int number = in.nextInt();
-            Troop t = listOfTroop.get(number);
+            Troop t = troopsForChoice.get(number);
+            listOfTroopTurn.add(t);
             while (t.isAlive()) {
                 System.out.println("Turn " + turn);
-                if (guard.isAlive())
+                if (guard.isAlive()) {
                     guard.attackTroop(t);
-                else if (king.isAlive())
+                }
+                if (king.isAlive() && t.isAlive()) {
                     king.attackTroop(t);
-                else
+                } else {
                     running = false;
-                listOfTroop = checkAlive(listOfTroop);
-                if (listOfTroop.isEmpty()) {
+                }
+                listOfTroopTurn = checkAlive(listOfTroopTurn);
+                if (listOfTroopTurn.isEmpty()) {
                     running = false;
                 }
                 if (t.isAlive()) {
-                    if (guard.isAlive())
+                    if (guard.isAlive()) {
                         t.attackTower(guard);
-                    else if (king.isAlive())
+                    } else if (king.isAlive()) {
                         t.attackTower(king);
-                    else
+                    } else {
                         running = false;
+                    }
                 }
                 turn++;
             }
@@ -126,5 +137,24 @@ public class Game implements Runnable {
             // System.out.print(listOfTroop);
         }
         return listOfTroop;
+    }
+
+    // generate 3 troops to choose in 1 turn
+    private List<Troop> iniTroopsChoice(List<Troop> listOfTroop) {
+        Set<Troop> troopsChoice = new HashSet<Troop>();
+        while (troopsChoice.size() < 3) {
+            troopsChoice.add(listOfTroop.get(rand.nextInt(listOfTroop.size())));
+        }
+        troopsForChoice.addAll(troopsChoice);
+        Iterator<Troop> iterator = troopsForChoice.iterator();
+        // print out 3 troops to choose in 1 turn
+        System.out.println("Available Troops for this turn: ");
+        int count = 1;
+        while (iterator.hasNext()) {
+            Troop t = iterator.next();
+            System.out.println(count++ + " : " + t.toString());
+        }
+
+        return troopsForChoice;
     }
 }
