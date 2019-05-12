@@ -96,14 +96,11 @@ public class Game implements Runnable {
     private void update() {
         if (!isWin) { //should replace win/loose status
             troopsForChoice = iniTroopsChoice(listOfTroop); //generate 3 different random troops per turn to choose
-            troopsForChoice = iniTroopsChoice(listOfTroop);
             //System.out.println("List: " + listOfTroop.toString());
             System.out.print("Choose Troop to spawn : ");
             int number = in.nextInt();
             Troop t = troopsForChoice.get(number);
             listOfTroopTurn.add(t); //add to alive groups
-
-            listOfTroopTurn.add(t);
             while (t.isAlive()) {
             	System.out.println("Turn " + turn);
             	if (guard.isAlive()) {
