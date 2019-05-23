@@ -20,17 +20,22 @@ public class Troop {
 
     //attack tower
     public void attackTower(Tower tower) {
-        int dmg = this.damage - tower.getDefense();
-        if (dmg > 0) {
-            tower.setHp(tower.getHp() - dmg);
-            System.out.println(this.getName() + " has attacked " + tower.getName() + " " + dmg + " damage");
-            if (tower.getHp() < 0) {
-                System.out.println(this.getName() + " destroyed " + tower.getName());
-            } else {
-                System.out.println(tower.getName() + " has " + tower.getHp() + " HP left ");
-            }
+        if (tower.isAlive()) {
+            int dmg = this.damage - tower.getDefense();
+            if (dmg > 0) {
+                tower.setHp(tower.getHp() - dmg);
+                System.out.println(this.getName() + " has attacked " + tower.getName() + " Tower " + dmg + " damage");
+                if (tower.getHp() <= 0) {
+                    System.out.println(this.getName() + " destroyed " + tower.getName() + " Tower");
+                } else {
+                    System.out.println(tower.getName() + " Tower has " + tower.getHp() + " HP left ");
+                }
 
+            }
+        } else {
+            System.out.println("no tower to attack");
         }
+
     }
 
     //check alive
