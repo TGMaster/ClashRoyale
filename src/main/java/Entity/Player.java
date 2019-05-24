@@ -5,11 +5,17 @@
  */
 package Entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  *
  * @author TGMaster
  */
+@Getter
+@Setter
 public class Player {
+    private String id;
     private String username;
     private String password;
     
