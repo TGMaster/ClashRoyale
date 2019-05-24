@@ -72,8 +72,8 @@ public class Game implements Runnable {
 
     private void init() {
         running = true;
-        guard1 = new Tower("Guard", 1000, 300, 100);
-        guard2 = new Tower("Guard", 1000, 300, 100);
+        guard1 = new Tower("Guard 1", 1000, 300, 100);
+        guard2 = new Tower("Guard 2", 1000, 300, 100);
         king = new Tower("King", 2000, 500, 300);
         in = new Scanner(System.in);
     }

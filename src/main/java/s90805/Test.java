@@ -6,7 +6,6 @@
 package s90805;
 
 /**
- *
  * @author Kuro
  */
 public class Test {
