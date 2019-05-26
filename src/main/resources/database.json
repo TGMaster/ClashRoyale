@@ -1,0 +1,29 @@
+{
+    "Player": [
+        {
+            "id": "1",
+            "username": "abc",
+            "password": "xyz"
+        },
+        {
+            "id": "2",
+            "username": "",
+            "password": ""
+        },
+        {
+            "id": "3",
+            "username": "",
+            "password": ""
+        },
+        {
+            "id": "4",
+            "username": "",
+            "password": ""
+        },
+        {
+            "id": "5",
+            "username": "",
+            "password": ""
+        }
+    ]
+}

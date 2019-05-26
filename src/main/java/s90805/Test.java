@@ -12,8 +12,9 @@ public class Test {
 
     /**
      * @param args the command line arguments
+     * @throws Exception
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Game game = new Game();
     }
 
