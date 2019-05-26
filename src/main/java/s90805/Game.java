@@ -7,6 +7,7 @@ package s90805;
 
 import Entity.Tower;
 import Entity.Troop;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,7 +17,6 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- *
  * @author S410U
  */
 public class Game implements Runnable {
@@ -72,9 +72,9 @@ public class Game implements Runnable {
 
     private void init() {
         running = true;
-        guard1 = new Tower("Guard 1", 1000, 300, 100);
-        guard2 = new Tower("Guard 2", 1000, 300, 100);
-        king = new Tower("King", 2000, 500, 300);
+        guard1 = new Tower("Guard Tower 1", 1000, 300, 100);
+        guard2 = new Tower("Guard Tower 2", 1000, 300, 100);
+        king = new Tower("King Tower", 2000, 500, 200); //Decrease defend to 200 origin is 300
         in = new Scanner(System.in);
     }
 
@@ -92,57 +92,112 @@ public class Game implements Runnable {
                 Troop troop = listOfTroopTurn.get(0); //take first troop
                 guard1.attackTroop(troop);
                 listOfTroopTurn = checkAlive(listOfTroopTurn);
-                if (troop.isAlive()) {
+                if (troop.isAlive()) { //first troop still alive after guard 1 attack
                     troop.attackTower(guard1);
                     guard2.attackTroop(troop);
                     listOfTroopTurn = checkAlive(listOfTroopTurn);
-                    if (troop.isAlive()) {
+                    if (troop.isAlive()) { //first troop still alive after guard 2 attack
                         king.attackTroop(troop);
                         listOfTroopTurn = checkAlive(listOfTroopTurn);
                         if (!listOfTroopTurn.isEmpty()) {
-                            allTroopsAttack(listOfTroopTurn);
+                            allTroopsAttack(listOfTroopTurn, 1);
                         }
-                    } else if (!listOfTroopTurn.isEmpty()) {
-                        troop = listOfTroopTurn.get(0);
+                    } else if (!listOfTroopTurn.isEmpty()) { //first troop dead after guard 2 attack
+                        troop = listOfTroopTurn.get(0); // take second troop
                         king.attackTroop(troop);
                         listOfTroopTurn = checkAlive(listOfTroopTurn);
                         if (!listOfTroopTurn.isEmpty()) {
-                            allTroopsAttack(listOfTroopTurn);
+                            allTroopsAttack(listOfTroopTurn, 0);
                         }
                     }
                     System.out.println("End This Turn");
-                } else if (!listOfTroopTurn.isEmpty()) {
-                    troop = listOfTroopTurn.get(0);
+                } else if (!listOfTroopTurn.isEmpty()) { //first troop dead after guard 1 attack
+                    troop = listOfTroopTurn.get(0); // take second troop
                     troop.attackTower(guard1);
                     guard2.attackTroop(troop);
                     listOfTroopTurn = checkAlive(listOfTroopTurn);
-                    if (troop.isAlive()) {
+                    if (troop.isAlive()) { //second troop still alive after guard 2 attack
                         king.attackTroop(troop);
                         listOfTroopTurn = checkAlive(listOfTroopTurn);
                         if (!listOfTroopTurn.isEmpty()) {
-                            allTroopsAttack(listOfTroopTurn);
+                            allTroopsAttack(listOfTroopTurn, 1);
                         }
-                    } else if (!listOfTroopTurn.isEmpty()) {
-                        troop = listOfTroopTurn.get(0); // take third troop in list
+                    } else if (!listOfTroopTurn.isEmpty()) { //second troop dead after guard 2 attack
+                        troop = listOfTroopTurn.get(0); // take third troop
                         king.attackTroop(troop);
                         listOfTroopTurn = checkAlive(listOfTroopTurn);
                         if (!listOfTroopTurn.isEmpty()) {
-                            allTroopsAttack(listOfTroopTurn);
+                            allTroopsAttack(listOfTroopTurn, 0);
                         }
                     }
+                    System.out.println("End This Turn");
                 }
-            } else if (guard2.isAlive()) { //guard tower 1 is destroy
-
+            } else if (guard2.isAlive()) { //guard tower 1 is destroy guard tower 2 and king tower is still alive
+                Troop troop = listOfTroopTurn.get(0); //take first troop
+                guard2.attackTroop(troop);
+                listOfTroopTurn = checkAlive(listOfTroopTurn);
+                if (troop.isAlive()) { //first troop still alive after guard 2 attack
+                    System.out.println("Troops alive in this turn" + listOfTroopTurn);
+                    System.out.print("Choose guard tower (0) or king tower (1) " + troop.getName() + " to attack");
+                    int choiceTower = in.nextInt();
+                    if (choiceTower == 0) {
+                        if (guard2.isAlive()) {
+                            troop.attackTower(guard2);
+                        }
+                    } else {
+                        if (king.isAlive()) {
+                            troop.attackTower(king);
+                        }
+                    }
+                    king.attackTroop(troop);
+                    listOfTroopTurn = checkAlive(listOfTroopTurn);
+                    if (!listOfTroopTurn.isEmpty()) {
+                        allTroopsAttack(listOfTroopTurn, 1);
+                    }
+                    System.out.println("End This Turn");
+                } else if (!listOfTroopTurn.isEmpty()) { //first troop dead after guard 2 attack
+                    System.out.println("Troops alive in this turn" + listOfTroopTurn);
+                    troop = listOfTroopTurn.get(0); // take second troop
+                    System.out.print("Choose guard tower (0) or king tower (1) " + troop.getName() + " to attack");
+                    int choiceTower = in.nextInt();
+                    if (choiceTower == 0) {
+                        if (guard2.isAlive()) {
+                            troop.attackTower(guard2);
+                        }
+                    } else {
+                        if (king.isAlive()) {
+                            troop.attackTower(king);
+                        }
+                    }
+                    king.attackTroop(troop);
+                    listOfTroopTurn = checkAlive(listOfTroopTurn);
+                    if (!listOfTroopTurn.isEmpty()) {
+                        allTroopsAttack(listOfTroopTurn, 0);
+                    }
+                    System.out.println("End This Turn");
+                }
+            } else { // only king tower alive
+                Troop troop = listOfTroopTurn.get(0); //take first troop
+                king.attackTroop(troop);
+                listOfTroopTurn = checkAlive(listOfTroopTurn);
+                if (!listOfTroopTurn.isEmpty()) {
+                    allTroopsAttack(listOfTroopTurn, 0);
+                }
+                System.out.println("End This Turn");
             }
+        } else {
+            System.out.println("End Game");
         }
     }
 
-    private void allTroopsAttack(List<Troop> listOfTroop) {
-        for (Troop troop : listOfTroop) {
+    private void allTroopsAttack(List<Troop> listOfTroop, int index) { //index to know order of troop
+        System.out.println("Troops alive in this turn" + listOfTroop);
+        for (int i = index; i < listOfTroop.size(); i++) {
+            Troop troop = listOfTroop.get(i);
             if (guard1.isAlive()) {
                 troop.attackTower(guard1);
             } else if (guard2.isAlive() && king.isAlive()) {
-                System.out.println("Choose guard tower (0) or king tower (1) to attack");
+                System.out.print("Choose guard tower (0) or king tower (1) " + troop.getName() + " to attack");
                 int choiceTower = in.nextInt();
                 if (choiceTower == 0) {
                     if (guard2.isAlive()) {
@@ -178,12 +233,12 @@ public class Game implements Runnable {
     private List<Troop> iniTroopsChoice() {
         List<Troop> listOfTroop = new ArrayList<Troop>();
         Troop pawn = new Troop("Pawn", 50, 150, 100);
-        Troop bisop = new Troop("Bisop", 100, 200, 150);
+        Troop bishop = new Troop("Bishop", 100, 200, 150);
         Troop rook = new Troop("Rook", 250, 200, 200);
         Troop knight = new Troop("Knight", 200, 300, 150);
         Troop prince = new Troop("Prince", 500, 400, 200);
         listOfTroop.add(pawn);
-        listOfTroop.add(bisop);
+        listOfTroop.add(bishop);
         listOfTroop.add(rook);
         listOfTroop.add(knight);
         listOfTroop.add(prince);
