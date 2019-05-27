@@ -23,12 +23,14 @@ public class Tower {
         int dmg = this.damage - troop.getDefense();
         if (dmg > 0) {
             troop.setHp(troop.getHp() - dmg);
-            System.out.println(this.getName() + " Tower has attacked " + troop.getName() + " " + dmg + " damage");
+            System.out.println(this.getName() + " has attacked " + troop.getName() + " " + dmg + " damage");
             if (troop.getHp() < 0) {
-                System.out.println(this.getName() + " Tower destroyed " + troop.getName());
+                System.out.println(this.getName() + " destroyed " + troop.getName());
             } else {
-                System.out.println(troop.getName() + "  has " + troop.getHp() + " HP left ");
+                System.out.println(troop.getName() + " has " + troop.getHp() + " HP left ");
             }
+        } else {
+            System.out.println(this.getName() + " cannot attack " + troop.getName());
         }
 
     }
