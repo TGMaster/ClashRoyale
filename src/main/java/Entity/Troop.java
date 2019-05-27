@@ -27,9 +27,11 @@ public class Troop {
             if (tower.getHp() <= 0) {
                 System.out.println(this.getName() + " destroyed " + tower.getName() + " Tower");
             } else {
-                System.out.println(tower.getName() + " Tower has " + tower.getHp() + " HP left ");
+                System.out.println(tower.getName() + " has " + tower.getHp() + " HP left ");
             }
 
+        }else{
+            System.out.println(this.getName() + " cannot attack " + tower.getName());
         }
     }
 
