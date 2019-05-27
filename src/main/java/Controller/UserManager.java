@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import Config.Config;
 import Entity.Player;
 
 import com.google.gson.JsonArray;
@@ -24,14 +25,18 @@ import javax.websocket.Session;
 public class UserManager {
 
     private final static Set<Player> PLAYERS = new HashSet<Player>();
+    private final static HashMap<String, Set<Player>> onlinePlayers = new HashMap<String, Set<Player>>();
     private final static HashMap<String, Session> playerSession = new HashMap<String, Session>();
 
-    protected static void joinGame(Player player, Session session) {
-
+    public static void joinGame(Player player, Session session) {
+        PLAYERS.add(player);
+        playerSession.put(player.getId(), session);
     }
 
-    protected static void leaveGame(String id) {
-
+    public static void leaveGame(String id) {
+        Player player = getUserById(id);
+        PLAYERS.remove(player);
+        playerSession.remove(id);
     }
 
     private static Player getUserById(String id) {
@@ -43,12 +48,13 @@ public class UserManager {
         return null;
     }
     
-    protected void Login(String username, String password) throws Exception {
+    public static void Login(String username, String password) throws Exception {
+        JsonObject loginMsg = new JsonObject(); // Login message
+        loginMsg.addProperty("action", Config.LOGIN);
         if (username.equals("") || password.equals("")) {
-            System.out.println("Please enter full username and password!!!");
+            loginMsg.addProperty("message", "Missing username or password");
         } else {
-            // Check if it is owner
-            JsonObject loginMsg = new JsonObject();
+            // Read database
             JsonObject jsonObject = new JsonParser().parse(new FileReader("src/main/resources/database.json")).getAsJsonObject();
 
             boolean isLogin = false;
@@ -62,11 +68,10 @@ public class UserManager {
             }
 
             if (isLogin) {
-//                loginMsg.addProperty("action", Config.REMOVE_MATCH);
-//                loginMsg.addProperty("id", id);
+                loginMsg.addProperty("username", username);
                 loginMsg.addProperty("message", "Login successfully");
             } else {
-                System.out.println("Login failed!!!");
+                loginMsg.addProperty("message", "Login failed");
             }
         }
     }
