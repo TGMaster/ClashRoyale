@@ -5,7 +5,7 @@
  */
 package Controller;
 
-import Config.Config;
+import Util.Constant;
 import Entity.Player;
 
 import com.google.gson.JsonArray;
@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +23,7 @@ import javax.websocket.Session;
  *
  * @author Tien
  */
-public class UserManager {
+public class PlayerManager {
 
     private final static Set<Player> PLAYERS = new HashSet<Player>();
     private final static HashMap<String, Set<Player>> onlinePlayers = new HashMap<String, Set<Player>>();
@@ -47,32 +48,31 @@ public class UserManager {
         }
         return null;
     }
-    
-    public static void Login(String username, String password) throws Exception {
-        JsonObject loginMsg = new JsonObject(); // Login message
-        loginMsg.addProperty("action", Config.LOGIN);
-        if (username.equals("") || password.equals("")) {
-            loginMsg.addProperty("message", "Missing username or password");
+
+    // Send back to front end
+    private static void sendToSession(Session session, JsonObject message) {
+        try {
+            if (session.isOpen()) {
+                session.getBasicRemote().sendText(message.toString());
+            }
+        } catch (IOException ex) {
+            //Logger.getLogger(UserSessionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            //System.out.println("Session already destroyed..");
+        }
+    }
+
+    // Create Message
+    private static JsonObject gameCmd(String sender, String message) {
+        Player player = getUserById(sender);
+        if (player != null) {
+            JsonObject addMessage = new JsonObject();
+            addMessage.addProperty("action", Constant.COMMAND);
+            addMessage.addProperty("id", sender);
+            addMessage.addProperty("name", player.getUsername());
+            addMessage.addProperty("message", message);
+            return addMessage;
         } else {
-            // Read database
-            JsonObject jsonObject = new JsonParser().parse(new FileReader("src/main/resources/database.json")).getAsJsonObject();
-
-            boolean isLogin = false;
-            JsonArray arr = jsonObject.getAsJsonArray("Player");
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject player = arr.get(i).getAsJsonObject();
-                if (username.equals(player.get("username").getAsString()) && password.equals(player.get("password").getAsString())) {
-                    isLogin = true;
-                    break;
-                }
-            }
-
-            if (isLogin) {
-                loginMsg.addProperty("username", username);
-                loginMsg.addProperty("message", "Login successfully");
-            } else {
-                loginMsg.addProperty("message", "Login failed");
-            }
+            return null;
         }
     }
 }

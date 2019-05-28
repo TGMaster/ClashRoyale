@@ -9,9 +9,10 @@ package Socket;
  *
  * @author Tien
  */
-import Config.Config;
-import Controller.UserManager;
+import Util.Constants;
+import Controller.PlayerManager;
 import Entity.Player;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -49,13 +50,13 @@ public class Server {
     public void handleMessage(String message, Session session) {
         Gson gson = new GsonBuilder().create();
         JsonObject json = gson.fromJson(message, JsonElement.class).getAsJsonObject();
-        if (Config.JOIN.equals(json.get("action").getAsString())) {
+        if (Constants.JOIN.equals(json.get("action").getAsString())) {
             joinGame(json, session);
         }
-        if (Config.LEAVE.equals(json.get("action").getAsString())) {
+        if (Constants.LEAVE.equals(json.get("action").getAsString())) {
             leaveGame(json);
         }
-        if (Config.COMMAND.equals(json.get("action").getAsString())) {
+        if (Constants.COMMAND.equals(json.get("action").getAsString())) {
             cmdMessage(json);
         }
     }
@@ -73,12 +74,12 @@ public class Server {
         Player p = new Player();
         p.setId(json.get("id").getAsString());
         p.setUsername(json.get("name").getAsString());
-        UserManager.joinGame(p, session);
+        PlayerManager.joinGame(p, session);
     }
     
     private void leaveGame(JsonObject json) {
         String id = json.get("id").getAsString();
-        UserManager.leaveGame(id);
+        PlayerManager.leaveGame(id);
     }
     
     private void cmdMessage(JsonObject json) {

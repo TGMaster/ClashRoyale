@@ -24,5 +24,5 @@ public class Player {
     private String password;
     
     //TODO
-    private String mana;
+    private int mana;
 }

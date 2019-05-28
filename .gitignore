@@ -5,5 +5,5 @@ ClashRoyale.iml
 .settings
 .classpath
 .factorypath
-/.project
-/.vscode
+.project
+.vscode
