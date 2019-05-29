@@ -26,7 +26,6 @@ import javax.websocket.Session;
 public class PlayerManager {
 
     private final static Set<Player> PLAYERS = new HashSet<Player>();
-    private final static HashMap<String, Set<Player>> onlinePlayers = new HashMap<String, Set<Player>>();
     private final static HashMap<String, Session> playerSession = new HashMap<String, Session>();
 
     public static void joinGame(Player player, Session session) {
@@ -62,17 +61,26 @@ public class PlayerManager {
     }
 
     // Create Message
-    private static JsonObject gameCmd(String sender, String message) {
+    private static JsonObject createGameCmd(String sender, String command) {
         Player player = getUserById(sender);
         if (player != null) {
             JsonObject addMessage = new JsonObject();
             addMessage.addProperty("action", Constant.COMMAND);
             addMessage.addProperty("id", sender);
             addMessage.addProperty("name", player.getUsername());
-            addMessage.addProperty("message", message);
+            addMessage.addProperty("command", command);
             return addMessage;
         } else {
             return null;
         }
+    }
+    
+    public static void sendCmd(String sender, String message) {
+        JsonObject chatMessage = createGameCmd(sender, message);
+
+        //sendToSession(pSession.get(sender), chatMessage);
+        //broadcast messages to others...
+        for (Player p : PLAYERS)
+            sendToSession(playerSession.get(p.getId()), chatMessage);
     }
 }

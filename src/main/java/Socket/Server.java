@@ -7,9 +7,9 @@ package Socket;
 
 /**
  *
- * @author Tien
+ * @author TGMaster
  */
-import Util.Constants;
+import Util.Constant;
 import Controller.PlayerManager;
 import Entity.Player;
 
@@ -50,13 +50,13 @@ public class Server {
     public void handleMessage(String message, Session session) {
         Gson gson = new GsonBuilder().create();
         JsonObject json = gson.fromJson(message, JsonElement.class).getAsJsonObject();
-        if (Constants.JOIN.equals(json.get("action").getAsString())) {
+        if (Constant.JOIN.equals(json.get("action").getAsString())) {
             joinGame(json, session);
         }
-        if (Constants.LEAVE.equals(json.get("action").getAsString())) {
+        if (Constant.LEAVE.equals(json.get("action").getAsString())) {
             leaveGame(json);
         }
-        if (Constants.COMMAND.equals(json.get("action").getAsString())) {
+        if (Constant.COMMAND.equals(json.get("action").getAsString())) {
             cmdMessage(json);
         }
     }
@@ -83,6 +83,8 @@ public class Server {
     }
     
     private void cmdMessage(JsonObject json) {
-        
+        String sender = json.get("id").getAsString();
+        String msg = json.get("cmd").getAsString();
+        PlayerManager.sendCmd(sender, msg);
     }
 }
