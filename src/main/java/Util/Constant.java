@@ -10,7 +10,6 @@ package Util;
  * @author TGMaster
  */
 public interface Constant {
-    public static final String LOGIN = "login";
     public static final String JOIN = "join";
     public static final String LEAVE = "leave";
     public static final String COMMAND = "cmd";

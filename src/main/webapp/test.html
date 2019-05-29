@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chat Server</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        .show {
+            display: inline-block;
+        }
+
+        .hide {
+            display: none;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        ul li {
+            padding: 5px 10px;
+            display: inline-block;
+            word-wrap: break-word;
+        }
+
+        #users_list {
+            /*height: 300px;*/
+            overflow: auto;
+        }
+
+        #users_list a {
+            padding: 5px;
+        }
+
+        #panel_body {
+            margin-bottom: 5px;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .btn-send {
+            padding: 6px 31px !important;
+        }
+
+        input {
+            border-width: 0 0 1px 0 !important;
+        }
+
+    </style>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+</head>
+<body onbeforeunload="return closeSocket()">
+    <div class="container">
+        <div class="row">
+            <h4>Welcome! <span id="user"></span></h4>
+            <a href="#" id="logout">Log out</a>
+        </div>
+        <div class="row">
+            <!-- Online users Div-->
+            <div class="col-sm-2">
+                <div class="list-group" id="users_list"></div>
+            </div>
+            <!-- Chat Area Div-->
+            <div class="col-sm-6">
+                <div id="panel_body">
+                    <ul class="list-group" id="chat_body"></ul>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" rows="1" id="comment" placeholder="Type your message..."/>
+                    </div>
+                    <div class="col-s">
+                        <button type="button" class="btn btn-primary btn-send" onclick="sendMessage()" id="sendBtn"><i class="fa fa-paper-plane"></i></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+    }
+</script>
+<script type="text/javascript">
+
+    // WebSocket Config
+
+    //var socketUrl = "ws://171.244.50.210:8080/chat-server/chat_room";
+    var socketUrl = "ws://localhost:8080/room";
+    var userId = getRandomInt(1, 10);
+    var userName = "Test";
+    var userListHeight = screen.height;
+    var allowPublicChat = true;
+
+</script>
+<script src="js/chat.js"></script>
+<script type="text/javascript">
+    start();
+</script>
+</body>
+</html>
