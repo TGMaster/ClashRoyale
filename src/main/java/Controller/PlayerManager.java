@@ -68,7 +68,7 @@ public class PlayerManager {
             addMessage.addProperty("action", Constant.COMMAND);
             addMessage.addProperty("id", sender);
             addMessage.addProperty("name", player.getUsername());
-            addMessage.addProperty("command", command);
+            addMessage.addProperty("message", command);
             return addMessage;
         } else {
             return null;

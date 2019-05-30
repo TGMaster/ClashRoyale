@@ -127,7 +127,7 @@ function joinChat() {
 	var request = {
 		action: actions._JOIN,
 		id: userId,
-		name: userName
+		name: "Tester"
 	};
 	sendRequest(request);
 }

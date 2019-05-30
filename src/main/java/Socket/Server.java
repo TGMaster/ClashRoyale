@@ -50,14 +50,18 @@ public class Server {
     public void handleMessage(String message, Session session) {
         Gson gson = new GsonBuilder().create();
         JsonObject json = gson.fromJson(message, JsonElement.class).getAsJsonObject();
+        String tmp = json.get("action").getAsString();
         if (Constant.JOIN.equals(json.get("action").getAsString())) {
             joinGame(json, session);
+            System.out.println("A client just connected");
         }
         if (Constant.LEAVE.equals(json.get("action").getAsString())) {
             leaveGame(json);
+            System.out.println("A client just disconnected");
         }
         if (Constant.COMMAND.equals(json.get("action").getAsString())) {
-            cmdMessage(json);
+            cmdGame(json);
+            System.out.println("A client just sent a message");
         }
     }
 
@@ -67,7 +71,7 @@ public class Server {
     }
 
     @OnError
-    public void handleError() {
+    public void handleError(Throwable T) {
     }
 
     private void joinGame(JsonObject json, Session session) {
@@ -82,7 +86,7 @@ public class Server {
         PlayerManager.leaveGame(id);
     }
     
-    private void cmdMessage(JsonObject json) {
+    private void cmdGame(JsonObject json) {
         String sender = json.get("id").getAsString();
         String msg = json.get("cmd").getAsString();
         PlayerManager.sendCmd(sender, msg);

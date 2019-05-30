@@ -1,56 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Chat Server</title>
+    <title>Clash Royale</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style type="text/css">
-        .show {
-            display: inline-block;
-        }
-
-        .hide {
-            display: none;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0px;
-            margin: 0px;
-        }
-
-        ul li {
-            padding: 5px 10px;
-            display: inline-block;
-            word-wrap: break-word;
-        }
-
-        #users_list {
-            /*height: 300px;*/
-            overflow: auto;
-        }
-
-        #users_list a {
-            padding: 5px;
-        }
-
-        #panel_body {
-            margin-bottom: 5px;
-            height: 300px;
-            overflow-y: auto;
-        }
-
-        .btn-send {
-            padding: 6px 31px !important;
-        }
-
-        input {
-            border-width: 0 0 1px 0 !important;
-        }
-
-    </style>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
 </head>
 <body onbeforeunload="return closeSocket()">
     <div class="container">
@@ -59,10 +14,6 @@
             <a href="#" id="logout">Log out</a>
         </div>
         <div class="row">
-            <!-- Online users Div-->
-            <div class="col-sm-2">
-                <div class="list-group" id="users_list"></div>
-            </div>
             <!-- Chat Area Div-->
             <div class="col-sm-6">
                 <div id="panel_body">
@@ -80,7 +31,7 @@
             </div>
         </div>
     </div>
-    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="assets/js/jquery-3.2.1.js"></script>
     <script type="text/javascript">
         function getRandomInt(min, max) {
             min = Math.ceil(min);
@@ -100,7 +51,7 @@
     var allowPublicChat = true;
 
 </script>
-<script src="js/chat.js"></script>
+<script src="chat.js"></script>
 <script type="text/javascript">
     start();
 </script>
