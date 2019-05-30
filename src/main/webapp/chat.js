@@ -41,7 +41,7 @@
  	var response = JSON.parse(event.data);
     //If new user entered chat room, notify online friends and update friends list
     if (response.action === actions._JOIN) {
-    	//updateUserList(response);
+    	updateUserList(response);
     }
     //If new user left chat room, notify others and update users list
     if (response.action === actions._LEAVE) {
@@ -150,10 +150,10 @@ function sendRequest(request) {
 
 function updateUserList(user) {
 	if(user.id !== userId) {
-		var display = "show";
-		if (receiverId > 0) {
-			display = "hide";
-		}
+		// var display = "show";
+		// if (receiverId > 0) {
+		// 	display = "hide";
+		// }
 		var liClasses = "list-item text-wrap " + display;
 		var spanClasses = "badge badge-success badge-pill";
 		var extraLiAttributes = "";
@@ -165,25 +165,25 @@ function updateUserList(user) {
 			extraSpanAttributes,
 			user.name,
 			user.message);
-    	//updateChatBox(template);
+    	updateChatBox(template);
 
-    	var disabled = "";
-    	if (user.status === _status[0]) {
-    		disabled = "d-none";
-    	}
+    	// var disabled = "";
+    	// if (user.status === _status[0]) {
+    	// 	disabled = "d-none";
+    	// }
 
-    	var users_list = getElement("users_list", by.id);
-    	var user_a = document.createElement("a");
-    	user_a.setAttribute("id", user.id);
-    	user_a.setAttribute("href", "#");
-    	user_a.setAttribute("status", user.status);
-    	user_a.className = "list-group-item " + disabled;
-    	user_a.onclick = function () {
-    		setReceiverId(user.id, this);
-    	};
-    	var createAText = document.createTextNode(user.name);
-    	user_a.appendChild(createAText);
-    	users_list.appendChild(user_a);
+    	// var users_list = getElement("users_list", by.id);
+    	// var user_a = document.createElement("a");
+    	// user_a.setAttribute("id", user.id);
+    	// user_a.setAttribute("href", "#");
+    	// user_a.setAttribute("status", user.status);
+    	// user_a.className = "list-group-item " + disabled;
+    	// user_a.onclick = function () {
+    	// 	setReceiverId(user.id, this);
+    	// };
+    	// var createAText = document.createTextNode(user.name);
+    	// user_a.appendChild(createAText);
+    	// users_list.appendChild(user_a);
     }
 }
 
@@ -243,10 +243,10 @@ function sendMessage() {
         }
     } else {
     	request = {
-    		action: actions._PUBLIC_IM,
+    		action: actions._COMMAND,
     		id: userId,
     		message: message
-    	};
+		};
     }
     setElementText("comment", by.id, "");
     getElement("comment", by.id).focus();
@@ -380,7 +380,7 @@ function setUserListHeight() {
 }
 
 setUserName();
-setUserListHeight();
+// setUserListHeight();
 
 // Enter key
 var input = getElement("comment", by.id);
