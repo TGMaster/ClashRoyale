@@ -93,6 +93,7 @@ public class Game implements Runnable {
     private void update() {
         if (king.isAlive()) {
             player.regenMana();
+            System.out.println(player.getUsername() + " turn ");
             System.out.println("Mana pool of " + player.getUsername() + " in this turn : " + player.getMana());
             troopsForChoice = iniTroopsChoice(); //generate 3 different random troops per turn to choose
             boolean flag = false;
