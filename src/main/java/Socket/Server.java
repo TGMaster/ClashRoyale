@@ -80,15 +80,15 @@ public class Server {
         p.setUsername(json.get("name").getAsString());
         PlayerManager.joinGame(p, session);
     }
-    
+
     private void leaveGame(JsonObject json) {
         String id = json.get("id").getAsString();
         PlayerManager.leaveGame(id);
     }
-    
+
     private void cmdGame(JsonObject json) {
-        String sender = json.get("id").getAsString();
-        String msg = json.get("cmd").getAsString();
-        PlayerManager.sendCmd(sender, msg);
+        String id = json.get("id").getAsString();
+        String msg = json.get("message").getAsString();
+        PlayerManager.receiveCmd(id, msg);
     }
 }

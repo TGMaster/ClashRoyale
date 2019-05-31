@@ -17,7 +17,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.websocket.Session;
+
+import s90805.Game;
 
 /**
  *
@@ -25,8 +28,8 @@ import javax.websocket.Session;
  */
 public class PlayerManager {
 
-    private final static Set<Player> PLAYERS = new HashSet<Player>();
-    private final static HashMap<String, Session> playerSession = new HashMap<String, Session>();
+    public final static Set<Player> PLAYERS = new HashSet<Player>();
+    public final static HashMap<String, Session> playerSession = new HashMap<String, Session>();
 
     public static void joinGame(Player player, Session session) {
         PLAYERS.add(player);
@@ -61,26 +64,41 @@ public class PlayerManager {
     }
 
     // Create Message
-    private static JsonObject createGameCmd(String sender, String command) {
-        Player player = getUserById(sender);
-        if (player != null) {
+    private static JsonObject createMessage(String id, String message) {
+        if (id.equals("-1")) {
             JsonObject addMessage = new JsonObject();
             addMessage.addProperty("action", Constant.COMMAND);
-            addMessage.addProperty("id", sender);
-            addMessage.addProperty("name", player.getUsername());
-            addMessage.addProperty("message", command);
+            addMessage.addProperty("id", id);
+            addMessage.addProperty("name", "Server");
+            addMessage.addProperty("message", message);
             return addMessage;
         } else {
-            return null;
+            Player player = getUserById(id);
+            if (player != null) {
+                JsonObject addMessage = new JsonObject();
+                addMessage.addProperty("action", Constant.COMMAND);
+                addMessage.addProperty("id", id);
+                addMessage.addProperty("name", player.getUsername());
+                addMessage.addProperty("message", message);
+                return addMessage;
+            }
         }
+        return null;
     }
-    
-    public static void sendCmd(String sender, String message) {
-        JsonObject chatMessage = createGameCmd(sender, message);
 
+    public static void receiveCmd(String id, String message) {
+        Player player = new Player(id, "Tester", "123", 5);
+//        Runnable r = new Game(player, message);
+//        new Thread(r).start();
+
+    }
+
+    public static void sendCmd(String message) {
+        JsonObject messageJson = createMessage("0", message);
         //sendToSession(pSession.get(sender), chatMessage);
         //broadcast messages to others...
-        for (Player p : PLAYERS)
-            sendToSession(playerSession.get(p.getId()), chatMessage);
+        for (Player p : PLAYERS) {
+            sendToSession(playerSession.get(p.getId()), messageJson);
+        }
     }
 }
