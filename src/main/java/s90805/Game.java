@@ -387,7 +387,6 @@ public class Game implements Runnable {
         List<Troop> dataTroops = listOfTroopsFromJson();
         List<Troop> tempList = new ArrayList<Troop>();
         Set<Troop> troopsChoice = new HashSet<Troop>(listOfTroops);
-        ;
         //troopsChoice.addAll(troops);
         while (troopsChoice.size() < 3) {
             Troop t = dataTroops.get(rand.nextInt(dataTroops.size()));
