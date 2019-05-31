@@ -224,6 +224,8 @@ public class Game implements Runnable {
                                 if (choiceTower == 0) {
                                     if (guard2.isAlive()) {
                                         troop.attackTower(guard2);
+                                    } else {
+                                        troop.attackTower(king);
                                     }
                                 } else {
                                     if (king.isAlive()) {
@@ -270,14 +272,16 @@ public class Game implements Runnable {
                                     }
                                 }
                                 //System.out.println("End This Turn");
-                            } else if (!listOfTroopTurn.isEmpty()) { //first troop dead after guard 2 attack
+                            } else if (!listOfTroopTurn.isEmpty()) { //first troop dead after guard 1 attack
                                 //System.out.println("Troops alive in this turn" + listOfTroopTurn);
                                 troop = listOfTroopTurn.get(0); // take second troop
                                 //System.out.print("Choose guard tower (0) or king tower (1) " + troop.getName() + " to attack: ");
                                 int choiceTower = in.nextInt();
                                 if (choiceTower == 0) {
                                     if (guard1.isAlive()) {
-                                        troop.attackTower(guard2);
+                                        troop.attackTower(guard1);
+                                    } else {
+                                        troop.attackTower(king);
                                     }
                                 } else {
                                     if (king.isAlive()) {
