@@ -17,12 +17,9 @@ import com.google.gson.JsonParser;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-//import java.util.Scanner;
-import java.util.Set;
+import java.util.Scanner;
 
 /**
  * @author S410U
@@ -31,23 +28,24 @@ public class Game implements Runnable {
 
     private Thread thread;
     private boolean running;
-    private boolean isWin = false;
     private final int TICKS = 30;
     private final int TARGET_TIME = 1000 / TICKS;
-    private int turn = 1;
-    
+
     private String message = "";
 
-    //contain all information troops
+    // contain all information troops
 
-    List<Troop> listOfTroopTurn = new ArrayList<Troop>(); //contain player's troops in turn (alive troops)
-    List<Tower> listOfTower = new ArrayList<Tower>(); //contain all information about towers
-    //List<Tower> listOfTowerTurn = new ArrayList<Tower>(); //contain player's tower in turn
-    List<Troop> troopsForChoice = new ArrayList<Troop>(); // contain 3 different troops at anytime for player choose to spawn
+    private List<Troop> listOfTroopLeft = new ArrayList<Troop>(); // contain player's troops in left (alive troops)
+    private List<Troop> listOfTroopRight = new ArrayList<Troop>(); // contain player's troops in right (alive troops)
+    private List<Tower> listOfTower = new ArrayList<Tower>(); // contain all information about towers
+    // List<Tower> listOfTowerTurn = new ArrayList<Tower>(); //contain player's
+    // tower in turn
+    List<Troop> troopsForChoice = new ArrayList<Troop>(); // contain 3 different troops at anytime for player choose to
+                                                          // spawn
     Tower guard1, guard2, king;
     Player player;
     Random rand = new Random();
-    //private Scanner in;
+    private Scanner in;
 
     public Game() {
         if (thread == null) {
@@ -68,10 +66,10 @@ public class Game implements Runnable {
             update();
             elapsed = System.nanoTime() - start;
 
-//            wait = TARGET_TIME - elapsed / 1000000;
-//            if (wait < 0) {
-//                wait = TARGET_TIME;
-//            }
+            // wait = TARGET_TIME - elapsed / 1000000;
+            // if (wait < 0) {
+            // wait = TARGET_TIME;
+            // }
             wait = 2000;
 
             try {
@@ -85,155 +83,71 @@ public class Game implements Runnable {
     private void init() {
         running = true;
         listOfTower = listOfTowerFromJson();
-        king = listOfTower.get(0); //Decrease defend to 200 origin is 300
+        king = listOfTower.get(0); // Decrease defend to 200 origin is 300
         guard1 = listOfTower.get(1);
         guard2 = listOfTower.get(2);
-        player = new Player("1", "test", "123", 5);
-        //in = new Scanner(System.in);
+        player = new Player("1", "Tester", "123", 5);
+        in = new Scanner(System.in);
     }
 
     private void update() {
         if (king.isAlive()) {
             player.regenMana();
-            //System.out.println(player.getUsername() + " turn ");
-            //System.out.println("Mana pool of " + player.getUsername() + " in this turn : " + player.getMana());
+            System.out.println(player.getUsername() + " turn ");
+            System.out.println("Mana pool of " + player.getUsername() + " in this turn : " + player.getMana());
             message += "Mana pool of " + player.getUsername() + " in this turn : " + player.getMana() + "\n";
-            troopsForChoice = iniTroopsChoice(); //generate 3 different random troops per turn to choose
-            boolean flag = false;
-            while (!flag) {
-                printTroopList(troopsForChoice);
-                //System.out.print("Choose Troop to spawn (0-2) or End this turn (9) : ");
-                //int number = in.nextInt();
-                
-                int number = -1; //Initialize
-                if (number == 9) { //end turn
-                    //System.out.println("End this turn");
-                    flag = true;
-                } else if (number >= 0 && number <= 2) {
-                    Troop t = troopsForChoice.get(number);
-                    if (player.spawnTroop(t)) { //if enough mana to spawn troop
-                        flag = true;
-                        listOfTroopTurn.add(t); //add to alive groups
-                        //first guard tower still alive
+
+            if (troopsForChoice.size() < 3)
+                addTroopsChoice(); // auto add new troops
+
+            printTroopList(troopsForChoice);
+            System.out.print("Choose Troop to spawn (0-2): ");
+            int number = in.nextInt();
+
+            // int number = -1; // Initialize
+            if (number >= 0 && number <= 2) {
+                Troop t = troopsForChoice.get(number);
+                if (player.spawnTroop(t)) { // if enough mana to spawn troop
+                    troopsForChoice.remove(t);
+                    System.out.print("Choose lane 0 - Left, 1 - Right: ");
+                    int lane = in.nextInt();
+
+                    // Choose left lane
+                    if (lane == 0) {
+                        // Add to list Left
+                        listOfTroopLeft.add(t);
+                        Troop troop = listOfTroopLeft.get(0); //Get first troop
+                        // Guard 1 is alive
                         if (guard1.isAlive()) {
-                            Troop troop = listOfTroopTurn.get(0); //take first troop
                             guard1.attackTroop(troop);
-                            listOfTroopTurn = checkAlive(listOfTroopTurn);
-                            if (troop.isAlive()) { //first troop still alive after guard 1 attack
-                                troop.attackTower(guard1);
-                                guard2.attackTroop(troop);
-                                listOfTroopTurn = checkAlive(listOfTroopTurn);
-                                if (troop.isAlive()) { //first troop still alive after guard 2 attack
-                                    king.attackTroop(troop);
-                                    listOfTroopTurn = checkAlive(listOfTroopTurn);
-                                    if (!listOfTroopTurn.isEmpty()) {
-                                        if (troop.isAlive()) { //first troop still alive after king attack
-                                            allTroopsAttack(listOfTroopTurn, 1);
-                                        } else { //first troop dead after king attack
-                                            allTroopsAttack(listOfTroopTurn, 0);
-                                        }
-                                    }
-                                } else if (!listOfTroopTurn.isEmpty()) { //first troop dead after guard 2 attack
-                                    troop = listOfTroopTurn.get(0); // take second troop
-                                    king.attackTroop(troop);
-                                    listOfTroopTurn = checkAlive(listOfTroopTurn);
-                                    if (!listOfTroopTurn.isEmpty()) {
-                                        allTroopsAttack(listOfTroopTurn, 0);
-                                    }
-                                }
-                                //System.out.println("End This Turn");
-                            } else if (!listOfTroopTurn.isEmpty()) { //first troop dead after guard 1 attack
-                                troop = listOfTroopTurn.get(0); // take second troop
-                                troop.attackTower(guard1);
-                                guard2.attackTroop(troop);
-                                listOfTroopTurn = checkAlive(listOfTroopTurn);
-                                if (troop.isAlive()) { //second troop still alive after guard 2 attack
-                                    king.attackTroop(troop);
-                                    listOfTroopTurn = checkAlive(listOfTroopTurn);
-                                    if (!listOfTroopTurn.isEmpty()) {
-                                        if (troop.isAlive()) { //second troop still alive after king attack
-                                            allTroopsAttack(listOfTroopTurn, 1);
-                                        } else { //second troop dead after king attack
-                                            allTroopsAttack(listOfTroopTurn, 0);
-                                        }
-                                    }
-                                } else if (!listOfTroopTurn.isEmpty()) { //second troop dead after guard 2 attack
-                                    troop = listOfTroopTurn.get(0); // take third troop
-                                    king.attackTroop(troop);
-                                    listOfTroopTurn = checkAlive(listOfTroopTurn);
-                                    if (!listOfTroopTurn.isEmpty()) {
-                                        allTroopsAttack(listOfTroopTurn, 0);
-                                    }
-                                }
-                                //System.out.println("End This Turn");
-                            }
-                        } else if (guard2.isAlive()) { //guard tower 1 is destroy guard tower 2 and king tower is still alive
-                            Troop troop = listOfTroopTurn.get(0); //take first troop
-                            guard2.attackTroop(troop);
-                            listOfTroopTurn = checkAlive(listOfTroopTurn);
-                            if (troop.isAlive()) { //first troop still alive after guard 2 attack
-                                //System.out.println("Troops alive in this turn" + listOfTroopTurn);
-                                //System.out.print("Choose guard tower (0) or king tower (1) " + troop.getName() + " to attack: ");
-                                int choiceTower = in.nextInt();
-                                if (choiceTower == 0) {
-                                    if (guard2.isAlive()) {
-                                        troop.attackTower(guard2);
-                                    }
-                                } else {
-                                    if (king.isAlive()) {
-                                        troop.attackTower(king);
-                                    }
-                                }
-                                king.attackTroop(troop);
-                                listOfTroopTurn = checkAlive(listOfTroopTurn);
-                                if (!listOfTroopTurn.isEmpty()) {
-                                    if (troop.isAlive()) { //first troop still alive after king attack
-                                        allTroopsAttack(listOfTroopTurn, 1);
-                                    } else { //first troop dead after king attack
-                                        allTroopsAttack(listOfTroopTurn, 0);
-                                    }
-                                }
-                                //System.out.println("End This Turn");
-                            } else if (!listOfTroopTurn.isEmpty()) { //first troop dead after guard 2 attack
-                                //System.out.println("Troops alive in this turn" + listOfTroopTurn);
-                                troop = listOfTroopTurn.get(0); // take second troop
-                                //System.out.print("Choose guard tower (0) or king tower (1) " + troop.getName() + " to attack: ");
-                                int choiceTower = in.nextInt();
-                                if (choiceTower == 0) {
-                                    if (guard2.isAlive()) {
-                                        troop.attackTower(guard2);
-                                    }
-                                } else {
-                                    if (king.isAlive()) {
-                                        troop.attackTower(king);
-                                    }
-                                }
-                                king.attackTroop(troop);
-                                listOfTroopTurn = checkAlive(listOfTroopTurn);
-                                if (!listOfTroopTurn.isEmpty()) {
-                                    if (troop.isAlive()) { //second troop still alive after king attack
-                                        allTroopsAttack(listOfTroopTurn, 1);
-                                    } else { //second troop dead after king attack
-                                        allTroopsAttack(listOfTroopTurn, 0);
-                                    }
-                                }
-                                //System.out.println("End This Turn");
-                            }
-                        } else { // only king tower alive
-                            Troop troop = listOfTroopTurn.get(0); //take first troop
+                            listOfTroopLeft = checkAlive(listOfTroopLeft);
+                            allTroopsAttack(listOfTroopLeft, guard1);
+                        }
+                        // Guard 1 is dead
+                        else {
                             king.attackTroop(troop);
-                            listOfTroopTurn = checkAlive(listOfTroopTurn);
-                            if (!listOfTroopTurn.isEmpty()) {
-                                allTroopsAttack(listOfTroopTurn, 0);
-                            }
-                            //System.out.println("End This Turn");
+                            listOfTroopLeft = checkAlive(listOfTroopLeft);
+                            allTroopsAttack(listOfTroopLeft, king);
                         }
                     } else {
-                        continue;
+                        // Add to list Right
+                        listOfTroopRight.add(t);
+                        Troop troop = listOfTroopRight.get(0); //Get first troop
+                        // Guard 2 is alive
+                        if (guard2.isAlive()) {
+                            guard2.attackTroop(troop);
+                            listOfTroopRight = checkAlive(listOfTroopRight);
+                            allTroopsAttack(listOfTroopRight, guard2);
+                        }
+                        // Guard 2 is dead
+                        else {
+                            king.attackTroop(troop);
+                            listOfTroopRight = checkAlive(listOfTroopRight);
+                            allTroopsAttack(listOfTroopRight, king);
+                        }
                     }
                 }
             }
-
 
         } else {
             System.out.println("End Game");
@@ -241,39 +155,18 @@ public class Game implements Runnable {
         }
     }
 
-    private void allTroopsAttack(List<Troop> listOfTroop, int index) { //index to know order of troop
-        //System.out.println("Troops alive in this turn" + listOfTroop);
-        for (int i = index; i < listOfTroop.size(); i++) {
-            Troop troop = listOfTroop.get(i);
-            if (guard1.isAlive()) {
-                troop.attackTower(guard1);
-            } else if (guard2.isAlive() && king.isAlive()) {
-                //System.out.print("Choose guard tower (0) or king tower (1) " + troop.getName() + " to attack: ");
-                int choiceTower = in.nextInt();
-                if (choiceTower == 0) {
-                    if (guard2.isAlive()) {
-                        troop.attackTower(guard2);
-                    }
-                } else {
-                    if (king.isAlive()) {
-                        troop.attackTower(king);
-                    }
-                }
-            } else {
-                if (king.isAlive()) {
-                    troop.attackTower(king);
-                }
-            }
+    private void allTroopsAttack(List<Troop> listOfTroop, Tower tower) { // index to know order of troop
+        System.out.println("Troops alive in this turn: " + listOfTroop.toString());
+        for (Troop troop : listOfTroop) {
+            troop.attackTower(tower);
         }
     }
 
     private List<Troop> checkAlive(List<Troop> listOfTroop) {
-        Iterator<Troop> iterator = listOfTroop.iterator();
-        while (iterator.hasNext()) {
-            Troop t = iterator.next();
+        for (Troop t : listOfTroop) {
             if (!t.isAlive()) {
-                //System.out.println(t.getName() + " is dead ");
-                iterator.remove();
+                System.out.println(t.getName() + " is dead ");
+                listOfTroop.remove(t);
             }
             // System.out.print(listOfTroop);
         }
@@ -281,24 +174,23 @@ public class Game implements Runnable {
     }
 
     // generate 3 troops to choose in 1 turn
-    private List<Troop> iniTroopsChoice() {
-        List<Troop> listOfTroop = listOfTroopsFromJson();
-        List<Troop> troops = new ArrayList<Troop>();
-        Set<Troop> troopsChoice = new HashSet<Troop>();
-        while (troopsChoice.size() < 3) {
-            Troop t = listOfTroop.get(rand.nextInt(listOfTroop.size()));
-            troopsChoice.add(t);
+    private void addTroopsChoice() {
+        List<Troop> dataTroops = listOfTroopsFromJson();
+
+        while (troopsForChoice.size() < 3) {
+            int randnumber = rand.nextInt(dataTroops.size());
+            Troop troop = dataTroops.get(randnumber);
+            if (!troopsForChoice.contains(troop)) {
+                troopsForChoice.add(troop);
+            }
         }
-        troops.addAll(troopsChoice);
-        return troops;
     }
 
     private void printTroopList(List<Troop> listOfTroop) {
-        //System.out.println("Available Troops for this turn: ");
+        System.out.println("Available Troops for this turn: ");
         int count = 0;
         for (Troop t : listOfTroop) {
-            
-            //System.out.println(count++ + " : " + t.toString());
+            System.out.println(count++ + " : " + t.toString());
         }
     }
 
@@ -307,7 +199,8 @@ public class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("src/main/resources/towerandtroop.json")).getAsJsonObject();
+            jsonObject = new JsonParser().parse(new FileReader("src/main/resources/towerandtroop.json"))
+                    .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -325,7 +218,8 @@ public class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("src/main/resources/towerandtroop.json")).getAsJsonObject();
+            jsonObject = new JsonParser().parse(new FileReader("src/main/resources/towerandtroop.json"))
+                    .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
