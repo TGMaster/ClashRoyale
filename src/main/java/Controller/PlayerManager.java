@@ -18,7 +18,7 @@ import java.util.Set;
 import javax.websocket.Session;
 import s90805.Game;
 
-import s90805.TestThread;
+//import s90805.TestThread;
 
 /**
  *
