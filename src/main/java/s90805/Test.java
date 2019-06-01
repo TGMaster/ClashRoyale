@@ -15,12 +15,7 @@ public class Test {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        Game game = new Game();
-//        NoThread game = new NoThread();
-//        game.init();
-//        while (true) {
-//            game.update();
-//        }
+//        Game game = new Game();
     }
 
 }
