@@ -24,15 +24,12 @@ public class Tower {
         int dmg = this.damage - troop.getDefense();
         if (dmg > 0) {
             troop.setHp(troop.getHp() - dmg);
-            PlayerManager.sendCmd("cmd", this.name + " has attacked " + troop.getName() + " " + dmg + " damage");
-//            System.out.println(this.name + " has attacked " + troop.getName() + " " + dmg + " damage");
+            PlayerManager.printToChatAll("cmd", this.name + " has attacked " + troop.getName() + " " + dmg + " damage");
             if (troop.getHp() < 0) {
-//                System.out.println(this.name + " destroyed " + troop.getName());
-                PlayerManager.sendCmd("cmd", this.name + " has killed " + troop.getName());
+                PlayerManager.printToChatAll("cmd", this.name + " has killed " + troop.getName());
             }
         } else {
-            PlayerManager.sendCmd("cmd", this.name + " cannot attack " + troop.getName());
-//            System.out.println(this.name + " cannot attack " + troop.getName());
+            PlayerManager.printToChatAll("cmd", this.name + " cannot attack " + troop.getName());
         }
 
     }

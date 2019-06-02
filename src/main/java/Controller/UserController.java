@@ -5,8 +5,9 @@
  */
 package Controller;
 
+import Entity.Player;
+import Service.PlayerService;
 import Util.APIStatus;
-import Util.Constant;
 import Util.ResponseUtil;
 
 import java.io.FileNotFoundException;
@@ -36,6 +37,7 @@ public class UserController extends HttpServlet {
 
         protected ResponseUtil responseUtil;
         protected Gson gson = new Gson();
+        private PlayerService playerService;
 
         @Override
         protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -75,24 +77,15 @@ public class UserController extends HttpServlet {
                         responseUtil = new ResponseUtil(APIStatus.ERR_BAD_PARAMS);
                 } else {
                         // Read database
-                        JsonObject jsonObject = null;
-                        try {
-                                jsonObject = new JsonParser().parse(new FileReader("src/main/resources/database.json"))
-                                                .getAsJsonObject();
-                        } catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                        }
 
                         boolean isLogin = false;
-                        JsonArray arr = jsonObject.getAsJsonArray("Player");
-                        for (int i = 0; i < arr.size(); i++) {
-                                JsonObject player = arr.get(i).getAsJsonObject();
-                                if (username.equals(player.get("username").getAsString())
-                                                && password.equals(player.get("password").getAsString())) {
-                                        isLogin = true;
-                                        break;
-                                }
+                        Player p = playerService.findPlayerByUsername(username);
+                        if (p != null) {
+                            if (p.getPassword().equals(password)) {
+                                isLogin = true;
+                            }
+                        } else {
+                            responseUtil = new ResponseUtil(APIStatus.ERR_USER_NOT_FOUND);
                         }
 
                         if (isLogin) {

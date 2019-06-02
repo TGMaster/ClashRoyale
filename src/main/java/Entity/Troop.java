@@ -25,23 +25,37 @@ public class Troop {
         int dmg = this.damage - tower.getDefense();
         if (dmg > 0) {
             tower.setHp(tower.getHp() - dmg);
-            PlayerManager.sendCmd("cmd", this.name + " has attacked " + tower.getName() + " " + dmg + " damage");
-//            System.out.println(this.name + " has attacked " + tower.getName() + " " + dmg + " damage");
+            PlayerManager.printToChatAll("cmd", this.name + " has attacked " + tower.getName() + " " + dmg + " damage");
             if (tower.getHp() <= 0) {
-                PlayerManager.sendCmd("cmd", this.name + " has destroyed " + tower.getName());
-//                System.out.println(this.name + " destroyed " + tower.getName() + " Tower");
+                PlayerManager.printToChatAll("cmd", this.name + " has destroyed " + tower.getName());
             } else {
 //                System.out.println(tower.getName() + " has " + tower.getHp() + " HP left ");
             }
 
         } else {
-            PlayerManager.sendCmd("cmd", this.name + " cannot attack " + tower.getName());
-//            System.out.println(this.name + " cannot attack " + tower.getName());
+            PlayerManager.printToChatAll("cmd", this.name + " cannot attack " + tower.getName());
         }
     }
 
     //check alive
     public boolean isAlive() {
         return (this.hp > 0);
+    }
+
+    //attack troop
+    public void attackTroop(Troop troop) {
+        int dmg = this.damage - troop.getDefense();
+        if (dmg > 0) {
+            troop.setHp(troop.getHp() - dmg);
+            PlayerManager.printToChatAll("cmd", this.name + " has attacked " + troop.getName() + " " + dmg + " damage");
+            if (troop.getHp() <= 0) {
+                PlayerManager.printToChatAll("cmd", this.name + " has killed " + troop.getName());
+            } else {
+//                System.out.println(tower.getName() + " has " + tower.getHp() + " HP left ");
+            }
+
+        } else {
+            PlayerManager.printToChatAll("cmd", this.name + " cannot attack " + troop.getName());
+        }
     }
 }

@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package s90805;
+package Controller;
 
-import Controller.PlayerManager;
 import Entity.Player;
 import Entity.Tower;
 import Entity.Troop;
+import Service.PlayerService;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -18,9 +18,9 @@ import com.google.gson.JsonParser;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 /**
  * @author S410U
@@ -30,37 +30,47 @@ public class Game implements Runnable {
     private volatile boolean running;
     private final int TICKS = 30;
     private final int TARGET_TIME = 1000 / TICKS;
+    private final Random rand = new Random();
 
     // Websocket variable
-    private volatile int lane;
-    private volatile int choice;
-    private String message = "";
+    private volatile HashMap<String, Integer> lane = new HashMap<>();
+    private volatile HashMap<String, Integer> choice = new HashMap<>();
 
     // contain all information troops
-    private List<Troop> listOfTroopLeft = new ArrayList<Troop>(); // contain player's troops in left (alive troops)
-    private List<Troop> listOfTroopRight = new ArrayList<Troop>(); // contain player's troops in right (alive troops)
-    private List<Tower> listOfTower = new ArrayList<Tower>(); // contain all information about towers
+    private List<Troop> LeftLane = new ArrayList<>(); // contain player's troops in left (alive troops)
+    private List<Troop> RightLane = new ArrayList<>(); // contain player's troops in right (alive troops)
+    private List<Tower> listOfTower = new ArrayList<>(); // contain all information about towers
 
-    // List<Tower> listOfTowerTurn = new ArrayList<Tower>(); //contain player's
+    private final HashMap<String, List<Troop>> troopsDeployedLeft = new HashMap<>();
+    private final HashMap<String, List<Troop>> troopsDeployedRight = new HashMap<>();
+    private final HashMap<String, List<Tower>> towersOfPlayer = new HashMap<>();
+
     // tower in turn
-    List<Troop> troopsForChoice = new ArrayList<Troop>(); // contain 3 different troops at anytime for player choose to
+    private final HashMap<String, List<Troop>> troopsForChoice = new HashMap<>(); // contain 3 different troops at anytime for player choose to
+
     // spawn
     private Tower guard1, guard2, king;
-    Player player;
-    private final Random rand = new Random();
-    private Scanner in;
+    Player player1, player2;
 
-    public Game(Player player) {
-        this.player = player;
+    public Game(Player player1, Player player2) {
+        this.player1 = player1;
+        this.player2 = player2;
     }
 
     public void stop() {
         running = false;
     }
 
+    public void resetChoice(Player player) {
+        choice.clear();
+        lane.clear();
+    }
+
     @Override
     public void run() {
-        init();
+        init(player1);
+        init(player2);
+        running = true;
         long start;
         long elapsed;
         long wait;
@@ -68,7 +78,8 @@ public class Game implements Runnable {
         // Loop
         while (running) {
             start = System.nanoTime();
-            update();
+            update(player1);
+            update(player2);
             elapsed = System.nanoTime() - start;
 
             // wait = TARGET_TIME - elapsed / 1000000;
@@ -76,8 +87,8 @@ public class Game implements Runnable {
             // wait = TARGET_TIME;
             // }
             wait = 1000;
-            choice = -1;
-            lane = 0;
+            resetChoice(player1);
+            resetChoice(player2);
 
             try {
                 Thread.sleep(wait);
@@ -87,75 +98,87 @@ public class Game implements Runnable {
         }
     }
 
-    private void init() {
-        running = true;
-        choice = -1;
-        lane = 0;
+    private void init(Player player) {
+        resetChoice(player1);
+        resetChoice(player2);
+        troopsForChoice.put(player.getId(), new ArrayList<Troop>());
+        troopsDeployedLeft.put(player.getId(), new ArrayList<Troop>());
+        troopsDeployedRight.put(player.getId(), new ArrayList<Troop>());
+
+        // Tower
         listOfTower = listOfTowerFromJson();
-        king = listOfTower.get(0); // Decrease defend to 200 origin is 300
-        guard1 = listOfTower.get(1);
-        guard2 = listOfTower.get(2);
-//        in = new Scanner(System.in);
+        towersOfPlayer.put(player.getId(), listOfTower);
     }
 
-    private void update() {
+    private void update(Player player) {
+        String id = player.getId();
+        king = towersOfPlayer.get(id).get(0);
         if (king.isAlive()) {
+
+            // Regen Mana
             player.regenMana();
 //            System.out.println(player.getUsername() + " turn ");
 //            System.out.println("Mana pool of " + player.getUsername() + " in this turn : " + player.getMana());
-            sendMessage("mana", "" + player.getMana());
+            PlayerManager.printToChat("mana", player.getId(), "" + player.getMana());
 
-            if (troopsForChoice.size() < 3) {
-                addTroopsChoice(); // auto add new troops
+            // Add troops
+            if (troopsForChoice.get(id).size() < 3) {
+                addTroopsChoice(player);
             }
-            printTroopList(troopsForChoice);
+            printTroopList(troopsForChoice.get(id), player);
+
 //            System.out.print("Choose Troop to spawn (0-2): ");
 //            int choice = in.nextInt();
-
-            if (choice >= 0 && choice <= 2) {
-                Troop t = troopsForChoice.get(choice);
+            if (!choice.isEmpty() && choice.get(id) != null && choice.get(id) >= 0 && choice.get(id) <= 2) {
+                Troop t = troopsForChoice.get(id).get(choice.get(id));
                 if (player.spawnTroop(t)) { // if enough mana to spawn troop
-                    troopsForChoice.remove(t);
+                    troopsForChoice.get(id).remove(t);
 //                    System.out.print("Choose lane 0 - Left, 1 - Right: ");
 //                    int lane = in.nextInt();
 
-                    // Choose left lane
-                    if (lane == 1) {
-                        // Add to list Left
-                        listOfTroopLeft.add(t);
-                    } else if (lane == 2) {
-                        // Add to list Right
-                        listOfTroopRight.add(t);
+                    if (!lane.isEmpty()) {
+                        // Choose left lane
+                        if (lane.get(id) == 1) {
+                            // Add to list Left
+                            LeftLane.add(t);
+                            troopsDeployedLeft.get(id).add(t);
+                        } else if (lane.get(id) == 2) {
+                            // Add to list Right
+                            RightLane.add(t);
+                            troopsDeployedRight.get(id).add(t);
+                        }
                     }
                 }
             }
 
-            if (!listOfTroopLeft.isEmpty()) {
-                Troop troopLeft = listOfTroopLeft.get(0); //Get first troop
+            if (!troopsDeployedLeft.isEmpty() && !troopsDeployedLeft.get(id).isEmpty() && troopsDeployedLeft.get(id) != null) {
+                guard1 = towersOfPlayer.get(id).get(1);
+                Troop troopLeft = troopsDeployedLeft.get(id).get(0); //Get first troop
                 // Guard 1 is alive
                 if (guard1.isAlive()) {
                     guard1.attackTroop(troopLeft);
-                    listOfTroopLeft = checkAlive(listOfTroopLeft);
-                    allTroopsAttack(listOfTroopLeft, guard1);
+                    checkAlive(troopsDeployedLeft.get(id));
+                    allTroopsAttack(troopsDeployedLeft.get(id), guard1);
                 } // Guard 1 is dead
                 else {
                     king.attackTroop(troopLeft);
-                    listOfTroopLeft = checkAlive(listOfTroopLeft);
-                    allTroopsAttack(listOfTroopLeft, king);
+                    checkAlive(troopsDeployedLeft.get(id));
+                    allTroopsAttack(troopsDeployedLeft.get(id), king);
                 }
             }
-            if (!listOfTroopRight.isEmpty()) {
-                Troop troopRight = listOfTroopRight.get(0); //Get first troop
+            if (!troopsDeployedLeft.isEmpty() && !troopsDeployedRight.get(id).isEmpty() && troopsDeployedRight.get(id) != null) {
+                guard2 = towersOfPlayer.get(id).get(2);
+                Troop troopRight = troopsDeployedRight.get(id).get(0); //Get first troop
                 // Guard 2 is alive
                 if (guard2.isAlive()) {
                     guard2.attackTroop(troopRight);
-                    listOfTroopRight = checkAlive(listOfTroopRight);
-                    allTroopsAttack(listOfTroopRight, guard2);
+                    checkAlive(troopsDeployedRight.get(id));
+                    allTroopsAttack(troopsDeployedRight.get(id), guard2);
                 } // Guard 2 is dead
                 else {
                     king.attackTroop(troopRight);
-                    listOfTroopRight = checkAlive(listOfTroopRight);
-                    allTroopsAttack(listOfTroopRight, king);
+                    checkAlive(troopsDeployedRight.get(id));
+                    allTroopsAttack(troopsDeployedRight.get(id), king);
                 }
             }
 
@@ -174,7 +197,7 @@ public class Game implements Runnable {
         }
     }
 
-    private List<Troop> checkAlive(List<Troop> listOfTroop) {
+    private void checkAlive(List<Troop> listOfTroop) {
         for (Troop t : listOfTroop) {
             if (!t.isAlive()) {
 //                System.out.println(t.getName() + " is dead ");
@@ -183,38 +206,38 @@ public class Game implements Runnable {
             }
 //            System.out.print(listOfTroop);
         }
-        return listOfTroop;
     }
 
     // generate 3 troops to choose in 1 turn
-    private void addTroopsChoice() {
+    private void addTroopsChoice(Player player) {
+        String id = player.getId();
         List<Troop> dataTroops = listOfTroopsFromJson();
-
-        while (troopsForChoice.size() < 3) {
+        do {
             int randnumber = rand.nextInt(dataTroops.size());
             Troop troop = dataTroops.get(randnumber);
-            if (!troopsForChoice.contains(troop)) {
-                troopsForChoice.add(troop);
+            if (!troopsForChoice.get(id).contains(troop)) {
+                troopsForChoice.get(id).add(troop);
             }
-        }
+        } while (troopsForChoice.get(id).size() < 3);
     }
 
-    private void printTroopList(List<Troop> listOfTroop) {
+    private void printTroopList(List<Troop> listOfTroop, Player player) {
 //        System.out.println("Available Troops for this turn: ");
 //        sendMessage("troops", "Available Troops for this turn: ");
+        String message = "";
         int count = 0;
         for (Troop t : listOfTroop) {
             message += count++ + " : " + t.toString() + "<br>";
         }
-        message = sendMessage("troops", message);
+        PlayerManager.printToChat("troops", player.getId(), message);
     }
 
     private List<Troop> listOfTroopsFromJson() {
-        List<Troop> listOfTroop = new ArrayList<Troop>();
+        List<Troop> listOfTroop = new ArrayList<>();
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("src/main/resources/towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -233,7 +256,7 @@ public class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("src/main/resources/towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -247,17 +270,10 @@ public class Game implements Runnable {
         return listOfTower;
     }
 
-    private String sendMessage(String action, String msg) {
-        if (!msg.equals("")) {
-            PlayerManager.sendCmd(action, msg);
-        }
-        return "";
-    }
-
     // Received Cmd From Websocket
-    public void deployTroop(String message) {
+    public void deployTroop(String id, String message) {
         String[] msg = message.split(",");
-        choice = Integer.parseInt(msg[0]);
-        lane = Integer.parseInt(msg[1]);
+        choice.put(id, Integer.parseInt(msg[0]));
+        lane.put(id, Integer.parseInt(msg[1]));
     }
 }

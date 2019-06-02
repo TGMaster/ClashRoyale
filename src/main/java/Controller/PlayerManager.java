@@ -11,14 +11,11 @@ import Entity.Player;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.websocket.Session;
-import s90805.Game;
-
-import s90805.TestThread;
 
 /**
  *
@@ -26,7 +23,7 @@ import s90805.TestThread;
  */
 public class PlayerManager {
 
-    public final static Set<Player> PLAYERS = new HashSet<Player>();
+    public final static List<Player> PLAYERS = new ArrayList<Player>();
     public final static HashMap<String, Session> playerSession = new HashMap<String, Session>();
     
     private static Game game;
@@ -81,13 +78,17 @@ public class PlayerManager {
     }
 
     public static void receiveCmd(String id, String message) {
-        Player player = new Player(id, "Tester", "123", 5);
+        if (PLAYERS.size() < 2) {
+            return;
+        }
+        Player player1 = PLAYERS.get(0);
+        Player player2 = PLAYERS.get(1);
         JsonObject messageJson = createMessage(Constant.COMMAND, id, message);
         //sendToSession(pSession.get(sender), chatMessage);
         //broadcast messages to others...
         if (message.equals("run")) {
             System.out.println("Run Game");
-            game = new Game(player);
+            game = new Game(player1, player2);
             new Thread(game).start();
         }
         if (message.equals("stop")) {
@@ -97,19 +98,24 @@ public class PlayerManager {
         if (message.contains("spawn")) {
             System.out.println("Spawn troop");
             message = message.replace("spawn:", "");
-            game.deployTroop(message);
+            game.deployTroop(id, message);
         }
         for (Player p : PLAYERS) {
             sendToSession(playerSession.get(p.getId()), messageJson);
         }
     }
 
-    public static void sendCmd(String action, String message) {
+    public static void printToChatAll(String action, String message) {
         JsonObject messageJson = createMessage(action, "-1", message);
         //sendToSession(pSession.get(sender), chatMessage);
         //broadcast messages to others...
         for (Player p : PLAYERS) {
             sendToSession(playerSession.get(p.getId()), messageJson);
         }
+    }
+    
+    public static void printToChat(String action, String id, String message) {
+        JsonObject messageJson = createMessage(action, id, message);
+        sendToSession(playerSession.get(id), messageJson);
     }
 }

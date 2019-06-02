@@ -21,9 +21,13 @@ public class Player {
     private String id;
     private String username;
     private String password;
-
-    //TODO
     private int mana;
+    
+    public Player(String id, String username){
+        this.id = id;
+        this.username = username;
+        this.mana = 5;
+    }
 
     public void regenMana() {
         if (this.mana < 10) {
