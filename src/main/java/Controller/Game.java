@@ -106,7 +106,7 @@ public class Game implements Runnable {
         troopsDeployedRight.put(player.getId(), new ArrayList<Troop>());
 
         // Tower
-        listOfTower = listOfTowerFromJson();
+        listOfTower = listOfTowerFromJson(player);
         towersOfPlayer.put(player.getId(), listOfTower);
     }
 
@@ -228,7 +228,7 @@ public class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -242,12 +242,12 @@ public class Game implements Runnable {
         return listOfTroop;
     }
 
-    private List<Tower> listOfTowerFromJson() {
+    private List<Tower> listOfTowerFromJson(Player player) {
         List<Tower> listOfTower = new ArrayList<>();
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -256,6 +256,7 @@ public class Game implements Runnable {
         for (int i = 0; i < towerArray.size(); i++) {
             JsonObject obj = towerArray.get(i).getAsJsonObject();
             Tower t = gson.fromJson(obj, Tower.class);
+            t.setName(t.getName() + " " + player.getUsername());
             listOfTower.add(t);
         }
         return listOfTower;

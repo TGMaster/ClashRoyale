@@ -1,59 +1,59 @@
 {
-  "tower": [
-    {
-      "name": "King Tower",
-      "hp": 2000,
-      "damage": 500,
-      "defense": 200
-    },
-    {
-      "name": "Guard Tower 1",
-      "hp": 1000,
-      "damage": 300,
-      "defense": 100
-    },
-    {
-      "name": "Guard Tower 2",
-      "hp": 1000,
-      "damage": 300,
-      "defense": 100
-    }
-  ],
-  "troops": [
-    {
-      "name": "Pawn",
-      "hp": 50,
-      "damage": 150,
-      "defense": 100,
-      "mana": 3
-    },
-    {
-      "name": "Bishop",
-      "hp": 100,
-      "damage": 200,
-      "defense": 150,
-      "mana": 4
-    },
-    {
-      "name": "Rook",
-      "hp": 250,
-      "damage": 200,
-      "defense": 200,
-      "mana": 5
-    },
-    {
-      "name": "Knight",
-      "hp": 200,
-      "damage": 300,
-      "defense": 150,
-      "mana": 5
-    },
-    {
-      "name": "Prince",
-      "hp": 500,
-      "damage": 400,
-      "defense": 300,
-      "mana": 6
-    }
-  ]
+    "tower": [
+        {
+            "name": "King Tower",
+            "hp": 2000,
+            "damage": 500,
+            "defense": 200
+        },
+        {
+            "name": "Guard Tower 1",
+            "hp": 1000,
+            "damage": 300,
+            "defense": 100
+        },
+        {
+            "name": "Guard Tower 2",
+            "hp": 1000,
+            "damage": 300,
+            "defense": 100
+        }
+    ],
+    "troops": [
+        {
+            "name": "Pawn",
+            "hp": 50,
+            "damage": 150,
+            "defense": 100,
+            "mana": 3
+        },
+        {
+            "name": "Bishop",
+            "hp": 100,
+            "damage": 200,
+            "defense": 150,
+            "mana": 4
+        },
+        {
+            "name": "Rook",
+            "hp": 250,
+            "damage": 200,
+            "defense": 200,
+            "mana": 5
+        },
+        {
+            "name": "Knight",
+            "hp": 200,
+            "damage": 300,
+            "defense": 150,
+            "mana": 5
+        },
+        {
+            "name": "Prince",
+            "hp": 500,
+            "damage": 400,
+            "defense": 300,
+            "mana": 6
+        }
+    ]
 }
