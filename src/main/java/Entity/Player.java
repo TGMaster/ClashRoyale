@@ -40,7 +40,6 @@ public class Player {
             this.setMana(this.mana - troop.getMana());
             return true;
         } else {
-            System.out.println("Not enough mana to create " + troop.getName());
             return false;
         }
     }

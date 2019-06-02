@@ -30,7 +30,7 @@ public enum APIStatus {
     //////////////////
     ERR_INCORRECT_MODEL_DATA(700, "Incorrect model data"),
     ERR_USER_NOT_FOUND(701, "User not found."),
-    ERR_PASSWORD_NOT_MATCH(702, "Password doesn't match"),
+    ERR_PASSWORD_NOT_MATCH(702, "Password does not match"),
     ERR_CREATE_USER(703, "Create User fail"),
     ERR_INVALID_PARAM(704, "Param is invalid"),
     ERR_OLD_PASS(705, "Old password incorrect");

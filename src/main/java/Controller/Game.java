@@ -117,8 +117,6 @@ public class Game implements Runnable {
 
             // Regen Mana
             player.regenMana();
-//            System.out.println(player.getUsername() + " turn ");
-//            System.out.println("Mana pool of " + player.getUsername() + " in this turn : " + player.getMana());
             PlayerManager.printToChat("mana", player.getId(), "" + player.getMana());
 
             // Add troops
@@ -127,14 +125,10 @@ public class Game implements Runnable {
             }
             printTroopList(troopsForChoice.get(id), player);
 
-//            System.out.print("Choose Troop to spawn (0-2): ");
-//            int choice = in.nextInt();
             if (!choice.isEmpty() && choice.get(id) != null && choice.get(id) >= 0 && choice.get(id) <= 2) {
                 Troop t = troopsForChoice.get(id).get(choice.get(id));
                 if (player.spawnTroop(t)) { // if enough mana to spawn troop
                     troopsForChoice.get(id).remove(t);
-//                    System.out.print("Choose lane 0 - Left, 1 - Right: ");
-//                    int lane = in.nextInt();
 
                     if (!lane.isEmpty()) {
                         // Choose left lane
@@ -189,7 +183,6 @@ public class Game implements Runnable {
     }
 
     private void allTroopsAttack(List<Troop> listOfTroop, Tower tower) { // index to know order of troop
-//        System.out.println("Troops alive in this turn: " + listOfTroop.toString());
         for (Troop troop : listOfTroop) {
             if (tower.isAlive()) {
                 troop.attackTower(tower);
@@ -200,11 +193,9 @@ public class Game implements Runnable {
     private void checkAlive(List<Troop> listOfTroop) {
         for (Troop t : listOfTroop) {
             if (!t.isAlive()) {
-//                System.out.println(t.getName() + " is dead ");
                 listOfTroop.remove(t);
                 break;
             }
-//            System.out.print(listOfTroop);
         }
     }
 
