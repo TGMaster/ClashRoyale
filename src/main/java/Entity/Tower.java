@@ -21,17 +21,12 @@ public class Tower {
 
     //attack troop
     public void attackTroop(Troop troop) {
-        int dmg = this.damage - troop.getDefense();
-        if (dmg > 0) {
-            troop.setHp(troop.getHp() - dmg);
-            PlayerManager.printToChatAll("cmd", this.name + " has attacked " + troop.getName() + " " + dmg + " damage");
-            if (troop.getHp() < 0) {
-                PlayerManager.printToChatAll("cmd", this.name + " has killed " + troop.getName());
-            }
-        } else {
-            PlayerManager.printToChatAll("cmd", this.name + " cannot attack " + troop.getName());
+        float dmg = (float) (this.damage * ((100.0 / (100 + troop.getDefense()))));
+        troop.setHp((int) (troop.getHp() - dmg));
+        PlayerManager.printToChatAll("cmd", this.name + " has attacked " + troop.getName() + " " + (int) dmg + " damage");
+        if (troop.getHp() <= 0) {
+            PlayerManager.printToChatAll("cmd", this.name + " has killed " + troop.getName());
         }
-
     }
 
     //check alive

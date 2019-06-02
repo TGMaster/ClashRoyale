@@ -22,18 +22,13 @@ public class Troop {
 
     //attack tower
     public void attackTower(Tower tower) {
-        int dmg = this.damage - tower.getDefense();
-        if (dmg > 0) {
-            tower.setHp(tower.getHp() - dmg);
-            PlayerManager.printToChatAll("cmd", this.name + " has attacked " + tower.getName() + " " + dmg + " damage");
-            if (tower.getHp() <= 0) {
-                PlayerManager.printToChatAll("cmd", this.name + " has destroyed " + tower.getName());
-            } else {
-//                System.out.println(tower.getName() + " has " + tower.getHp() + " HP left ");
-            }
-
+        float dmg = (float) (this.damage * ((100.0 / (100 + tower.getDefense()))));
+        tower.setHp((int) (tower.getHp() - dmg));
+        PlayerManager.printToChatAll("cmd", this.name + " has attacked " + tower.getName() + " " + (int) dmg + " damage");
+        if (tower.getHp() <= 0) {
+            PlayerManager.printToChatAll("cmd", this.name + " has destroyed " + tower.getName());
         } else {
-            PlayerManager.printToChatAll("cmd", this.name + " cannot attack " + tower.getName());
+//                System.out.println(tower.getName() + " has " + tower.getHp() + " HP left ");
         }
     }
 
