@@ -22,12 +22,12 @@
 
 <body>
     <%
-    boolean isLogin = false;
-    Player player = (Player) session.getAttribute("player");
-    if (player != null) {
-        isLogin = true;
-    }
-%>
+        boolean isLogin = false;
+        Player player = (Player) session.getAttribute("player");
+        if (player != null) {
+            isLogin = true;
+        }
+    %>
     <section>
         <nav class="navbar navbar-default navbar-fixed-top navigation-clean-button"
             style="background-color:rgba(0, 0, 0, 0.5);color:rgb(255,255,255);">
@@ -47,7 +47,7 @@
                 <div class="collapse navbar-collapse" id="navcol-1">
                     <% if (isLogin) {%>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a class="btn btn-default action-button" role="button" href="scrim" id="play"><i class="fa fa-play" style="font-size:15px;"></i> <strong>PLAY</strong></a></li>
+                        <li><a class="btn btn-default action-button" role="button" href="game.jsp" id="play"><i class="fa fa-play" style="font-size:15px;"></i> <strong>PLAY</strong></a></li>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#"
                                 style="color:rgb(255,255,255);font-size:14px;">

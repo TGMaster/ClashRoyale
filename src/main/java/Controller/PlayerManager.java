@@ -25,7 +25,7 @@ public class PlayerManager {
 
     public final static List<Player> PLAYERS = new ArrayList<Player>();
     public final static HashMap<String, Session> playerSession = new HashMap<String, Session>();
-    
+
     private static Game game;
 
     public static void joinGame(Player player, Session session) {
@@ -78,27 +78,26 @@ public class PlayerManager {
     }
 
     public static void receiveCmd(String id, String message) {
-        if (PLAYERS.size() < 2) {
-            return;
-        }
-        Player player1 = PLAYERS.get(0);
-        Player player2 = PLAYERS.get(1);
         JsonObject messageJson = createMessage(Constant.COMMAND, id, message);
-        //sendToSession(pSession.get(sender), chatMessage);
-        //broadcast messages to others...
-        if (message.equals("run")) {
-            System.out.println("Run Game");
-            game = new Game(player1, player2);
-            new Thread(game).start();
-        }
-        if (message.equals("stop")) {
-            System.out.println("Stop Game");
-            game.stop();
-        }
-        if (message.contains("spawn")) {
-            System.out.println("Spawn troop");
-            message = message.replace("spawn:", "");
-            game.deployTroop(id, message);
+        if (PLAYERS.size() >= 2) {
+            Player player1 = PLAYERS.get(0);
+            Player player2 = PLAYERS.get(1);
+            //sendToSession(pSession.get(sender), chatMessage);
+            //broadcast messages to others...
+            if (message.equals("run")) {
+                System.out.println("Run Game");
+                game = new Game(player1, player2);
+                new Thread(game).start();
+            }
+            if (message.equals("stop")) {
+                System.out.println("Stop Game");
+                game.stop();
+            }
+            if (message.contains("spawn")) {
+                System.out.println("Spawn troop");
+                message = message.replace("spawn:", "");
+                game.deployTroop(id, message);
+            }
         }
         for (Player p : PLAYERS) {
             sendToSession(playerSession.get(p.getId()), messageJson);
@@ -113,7 +112,7 @@ public class PlayerManager {
             sendToSession(playerSession.get(p.getId()), messageJson);
         }
     }
-    
+
     public static void printToChat(String action, String id, String message) {
         JsonObject messageJson = createMessage(action, id, message);
         sendToSession(playerSession.get(id), messageJson);

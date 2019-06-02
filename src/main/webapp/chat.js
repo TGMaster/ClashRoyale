@@ -47,7 +47,7 @@ function onMessage(event) {
 	}
 	//If new user left chat room, notify others and update users list
 	if (response.action === actions._LEAVE) {
-		if (parseInt(response.id) === userId) {
+		if (response.id === userId) {
 			return;
 		}
 
@@ -90,7 +90,7 @@ function onMessage(event) {
 			alert("Public message from " + getSenderName(response.id));
 		}
 		var senderName;
-		if (parseInt(response.id) === userId || response.name === "") {
+		if (response.id === userId || response.name === "") {
 			display += " text-right";
 			senderName = "Me";
 			spanClasses = "badge badge-secondary badge-pill";
@@ -134,8 +134,7 @@ function setChatScrollPos() {
 function joinChat() {
 	var request = {
 		action: actions._JOIN,
-		id: userId,
-		name: "Tester"
+		id: userId
 	};
 	sendRequest(request);
 }
@@ -312,39 +311,39 @@ function setReceiverId(id, object) {
 	}
 }
 
-function loadPrivateChat() {
-	var chat_body = getElement("chat_body", by.id);
-	var list = chat_body.getElementsByTagName("li");
-	if (list.length > 0) {
-		for (i = 0; i < list.length; i++) {
-			if (list[i].hasAttribute("sender") && list[i].hasAttribute("receiver")) {
-				var sender = parseInt(list[i].getAttribute("sender"));
-				var receiver = parseInt(list[i].getAttribute("receiver"));
-				if ((userId === receiver && receiverId === sender) || (userId === sender && receiver === receiverId)) {
-					list[i].className = list[i].className.replace("hide", "show");
-				} else {
-					list[i].className = list[i].className.replace("show", "hide");
-				}
-			} else {
-				list[i].className = list[i].className.replace("show", "hide");
-			}
-		}
-	}
-}
+// function loadPrivateChat() {
+// 	var chat_body = getElement("chat_body", by.id);
+// 	var list = chat_body.getElementsByTagName("li");
+// 	if (list.length > 0) {
+// 		for (i = 0; i < list.length; i++) {
+// 			if (list[i].hasAttribute("sender") && list[i].hasAttribute("receiver")) {
+// 				var sender = parseInt(list[i].getAttribute("sender"));
+// 				var receiver = parseInt(list[i].getAttribute("receiver"));
+// 				if ((userId === receiver && receiverId === sender) || (userId === sender && receiver === receiverId)) {
+// 					list[i].className = list[i].className.replace("hide", "show");
+// 				} else {
+// 					list[i].className = list[i].className.replace("show", "hide");
+// 				}
+// 			} else {
+// 				list[i].className = list[i].className.replace("show", "hide");
+// 			}
+// 		}
+// 	}
+// }
 
-function loadPublicChat() {
-	var chat_body = getElement("chat_body", by.id);
-	var list = chat_body.getElementsByTagName("li");
-	if (list.length > 0) {
-		for (i = 0; i < list.length; i++) {
-			if (list[i].hasAttribute("sender") && list[i].hasAttribute("receiver")) {
-				list[i].className = list[i].className.replace("show", "hide");
-			} else {
-				list[i].className = list[i].className.replace("hide", "show");
-			}
-		}
-	}
-}
+// function loadPublicChat() {
+// 	var chat_body = getElement("chat_body", by.id);
+// 	var list = chat_body.getElementsByTagName("li");
+// 	if (list.length > 0) {
+// 		for (i = 0; i < list.length; i++) {
+// 			if (list[i].hasAttribute("sender") && list[i].hasAttribute("receiver")) {
+// 				list[i].className = list[i].className.replace("show", "hide");
+// 			} else {
+// 				list[i].className = list[i].className.replace("hide", "show");
+// 			}
+// 		}
+// 	}
+// }
 
 function getSenderName(id) {
 	return getElementInnerText(id, by.id);

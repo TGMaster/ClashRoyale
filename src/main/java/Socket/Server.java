@@ -12,6 +12,7 @@ package Socket;
 import Util.Constant;
 import Controller.PlayerManager;
 import Entity.Player;
+import Service.PlayerService;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,6 +32,7 @@ import javax.websocket.server.ServerEndpoint;
 public class Server {
 
     private static Integer numPlayers = 0;
+    private PlayerService playerService = new PlayerService();
 
     @OnOpen
     public void handleOpen(Session session) {
@@ -50,7 +52,6 @@ public class Server {
     public void handleMessage(String message, Session session) {
         Gson gson = new GsonBuilder().create();
         JsonObject json = gson.fromJson(message, JsonElement.class).getAsJsonObject();
-        String tmp = json.get("action").getAsString();
         if (Constant.JOIN.equals(json.get("action").getAsString())) {
             joinGame(json, session);
             System.out.println("A client just connected");
@@ -75,9 +76,7 @@ public class Server {
     }
 
     private void joinGame(JsonObject json, Session session) {
-        Player p = new Player();
-        p.setId(json.get("id").getAsString());
-        p.setUsername(json.get("name").getAsString());
+        Player p = playerService.findPlayerById(json.get("id").getAsString());
         PlayerManager.joinGame(p, session);
     }
 
