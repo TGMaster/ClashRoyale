@@ -34,6 +34,10 @@ public class Server {
     private static Integer numPlayers = 0;
     private PlayerService playerService = new PlayerService();
 
+    public static Integer getNumPlayers() {
+        return numPlayers;
+    }
+
     @OnOpen
     public void handleOpen(Session session) {
         numPlayers++;
@@ -88,6 +92,7 @@ public class Server {
     private void cmdGame(JsonObject json) {
         String id = json.get("id").getAsString();
         String msg = json.get("message").getAsString();
-        PlayerManager.receiveCmd(id, msg);
+        String team = json.get("team").getAsString();
+        PlayerManager.receiveCmd(id, team, msg);
     }
 }

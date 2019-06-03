@@ -24,11 +24,59 @@ import java.util.Random;
 /**
  * @author S410U
  */
-public class Game implements Runnable {
+public class GameControl {
+    private Player player1, player2;
+    
+    private Game game1;
+    private Game game2;
+    private Thread thread1;
+    private Thread thread2;
+    private final Thread coordinator = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+            }
+            System.out.println("coordinator stopping!");
+            game1.stop();
+            game2.stop();
+        }
+    });
+
+    public GameControl(Player player1, Player player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+    }
+
+    public void start() {
+        game1 = new Game(player1);
+        game2 = new Game(player2);
+        thread1 = new Thread(game1);
+        thread2 = new Thread(game2);
+        thread1.start();
+        thread2.start();
+    }
+
+    public void stop() {
+        coordinator.start();
+    }
+    
+    // Received Cmd From Websocket
+    public void deployTroop(String id, String team, String message) {
+        if (team.equals("enemy")) {
+            game2.deployTroop(id, message);
+        }
+        else {
+            game1.deployTroop(id, message);
+        }
+        
+    }
+}
+
+class Game implements Runnable {
 
     private volatile boolean running;
-    private final int TICKS = 30;
-    private final int TARGET_TIME = 1000 / TICKS;
     private final Random rand = new Random();
 
     // Websocket variable
@@ -49,11 +97,10 @@ public class Game implements Runnable {
 
     // spawn
     private Tower guard1, guard2, king;
-    Player player1, player2;
+    private final Player player;
 
-    public Game(Player player1, Player player2) {
-        this.player1 = player1;
-        this.player2 = player2;
+    public Game(Player player) {
+        this.player = player;
     }
 
     public void stop() {
@@ -67,27 +114,15 @@ public class Game implements Runnable {
 
     @Override
     public void run() {
-        init(player1);
-        init(player2);
+        init(player);
         running = true;
-        long start;
-        long elapsed;
         long wait;
 
         // Loop
         while (running) {
-            start = System.nanoTime();
-            update(player1);
-            update(player2);
-            elapsed = System.nanoTime() - start;
-
-            // wait = TARGET_TIME - elapsed / 1000000;
-            // if (wait < 0) {
-            // wait = TARGET_TIME;
-            // }
-            wait = 1000;
-            resetChoice(player1);
-            resetChoice(player2);
+            update(player);
+            wait = 2000;
+            resetChoice(player);
 
             try {
                 Thread.sleep(wait);
@@ -98,8 +133,7 @@ public class Game implements Runnable {
     }
 
     private void init(Player player) {
-        resetChoice(player1);
-        resetChoice(player2);
+        resetChoice(player);
         troopsForChoice.put(player.getId(), new ArrayList<Troop>());
         troopsDeployedLeft.put(player.getId(), new ArrayList<Troop>());
         troopsDeployedRight.put(player.getId(), new ArrayList<Troop>());
@@ -227,7 +261,7 @@ public class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -246,7 +280,7 @@ public class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

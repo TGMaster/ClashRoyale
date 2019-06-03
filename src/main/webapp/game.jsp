@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
     <style type="text/css">
         .show {
             display: inline-block;
@@ -76,7 +77,7 @@
                         <input type="text" class="form-control" rows="1" id="comment"
                             placeholder="Type your message..." />
                     </div>
-                    <div class="col-s">
+                    <div class="col-sm-2">
                         <button type="button" class="btn btn-primary btn-send" onclick="sendMessage()" id="sendBtn"><i
                                 class="fa fa-paper-plane"></i></button>
                     </div>
@@ -85,9 +86,12 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-1">Mana: <span id="mana"></span></div>
-            <div class="col-sm-1"></div>
-            <div class="col-sm-10">Troops: <p><span id="troops"></span></p>
+            <div class="col-sm-12">Mana:
+                <div class="progress">
+                    <div id="mana" class="progress-bar progress-bar-danger progress-bar-striped active" style="width:0%;"></div>
+                </div>
+            </div>
+            <div class="col-sm-12">Troops: <p><span id="troops"></span></p>
             </div>
         </div>
     </div>

@@ -12,15 +12,15 @@ var actions = {
 	_LEAVE: "leave",
 	_COMMAND: "cmd",
 	_MANA: "mana",
-	_TROOPS: "troops"
+	_TROOPS: "troops",
+	_TEAM: "team"
 };
 var by = {
 	id: "Id",
 	tag: "TagName",
 	class: "ClassName"
 };
-
-var _status = ["off", "on"];
+var userTeam;
 
 function onOpen(event) {/*Session created.*/
 }
@@ -43,6 +43,11 @@ function onMessage(event) {
 	var response = JSON.parse(event.data);
 	//If new user entered chat room, notify online friends and update friends list
 	if (response.action === actions._JOIN) {
+		if (response.team === "team1") {
+			userTeam = "team1";
+		} else {
+			userTeam = "team2";
+		}
 		updateUserList(response);
 	}
 	//If new user left chat room, notify others and update users list
@@ -51,16 +56,16 @@ function onMessage(event) {
 			return;
 		}
 
-		// if (receiverId === parseInt(response.id) || receiverId === -1) {
-		// 	display = "show";
-		// } else {
-		// 	display = "hide";
-		// }
+		if (receiverId === parseInt(response.id) || receiverId === -1) {
+			display = "show";
+		} else {
+			display = "hide";
+		}
 
-		// liClasses = "list-item text-wrap " + display;
-		// spanClasses = "badge badge-danger badge-pill";
-		// extraLiAttributes = "";
-		// extraSpanAttributes = "";
+		liClasses = "list-item text-wrap " + display;
+		spanClasses = "badge badge-danger badge-pill";
+		extraLiAttributes = "";
+		extraSpanAttributes = "";
 		template = prepareMessageTemplate(
 			liClasses,
 			spanClasses,
@@ -113,10 +118,14 @@ function onMessage(event) {
 		updateChatBox(template);
 	}
 	if (response.action === actions._MANA) {
-		getElement("mana", by.id).innerHTML = response.message;
+		// Mana
+		getElement("mana", by.id).style.width = parseInt(response.message)*10 + '%';
 	}
 	if (response.action === actions._TROOPS) {
 		getElement("troops", by.id).innerHTML = response.message;
+	}
+	if (response.action === actions._TEAM) {
+		
 	}
 
 	setChatScrollPos();
@@ -157,10 +166,10 @@ function sendRequest(request) {
 
 function updateUserList(user) {
 	if (user.id !== userId) {
-		// var display = "show";
-		// if (receiverId > 0) {
-		// 	display = "hide";
-		// }
+		var display = "show";
+		if (receiverId > 0) {
+			display = "hide";
+		}
 		var liClasses = "list-item text-wrap " + display;
 		var spanClasses = "badge badge-success badge-pill";
 		var extraLiAttributes = "";
@@ -211,16 +220,16 @@ function prepareMessageTemplate(
 	return template;
 }
 
-function countOnlineUsers() {
-	var online = 0;
-	var friends = getElement("users_list", by.id).getElementsByTagName("a");
-	for (i = 0; i < friends.length; i++) {
-		if (friends[i].getAttribute("status") === _status[1]) {
-			online++;
-		}
-	}
-	return online;
-}
+// function countOnlineUsers() {
+// 	var online = 0;
+// 	var friends = getElement("users_list", by.id).getElementsByTagName("a");
+// 	for (i = 0; i < friends.length; i++) {
+// 		if (friends[i].getAttribute("status") === _status[1]) {
+// 			online++;
+// 		}
+// 	}
+// 	return online;
+// }
 
 function sendMessage() {
 	var message = getElementText("comment", by.id);
@@ -237,24 +246,12 @@ function sendMessage() {
 		return;//if public chat is false and no receiver is selected, don't send message
 	}
 	var request;
-	if (receiverId > 0) {
-		if (getElement(receiverId, by.id).getAttribute("status") === _status[0]) {
-			return;//receiver offline
-		} else {
-			request = {
-				action: actions._PRIVATE_IM,
-				id: userId,
-				receiverId: receiverId,
-				message: message
-			};
-		}
-	} else {
-		request = {
-			action: actions._COMMAND,
-			id: userId,
-			message: message
-		};
-	}
+	request = {
+		action: actions._COMMAND,
+		id: userId,
+		team: userTeam,
+		message: message
+	};
 	setElementText("comment", by.id, "");
 	getElement("comment", by.id).focus();
 	sendRequest(request);
@@ -288,28 +285,28 @@ function setUserName() {
 	setElementInnerText("user", by.id, "<i>" + userName + "</i>");
 }
 
-function setReceiverId(id, object) {
-	if (getElement(id, by.id).getAttribute("status") === _status[0]) {
-		return;
-	} else {
-		if (receiverId > 0) {
-			getElement(receiverId, by.id).className = "list-group-item";
-			if (receiverId === id) {
-				receiverId = -1;//reset receiverId
-				loadPublicChat();
-			} else {
-				getElement(id, by.id).className = "list-group-item active";
-				receiverId = id;
-				loadPrivateChat();
-			}
+// function setReceiverId(id, object) {
+// 	if (getElement(id, by.id).getAttribute("status") === _status[0]) {
+// 		return;
+// 	} else {
+// 		if (receiverId > 0) {
+// 			getElement(receiverId, by.id).className = "list-group-item";
+// 			if (receiverId === id) {
+// 				receiverId = -1;//reset receiverId
+// 				loadPublicChat();
+// 			} else {
+// 				getElement(id, by.id).className = "list-group-item active";
+// 				receiverId = id;
+// 				loadPrivateChat();
+// 			}
 
-		} else {
-			receiverId = id;
-			getElement(id, by.id).className = "list-group-item active";
-			loadPrivateChat();
-		}
-	}
-}
+// 		} else {
+// 			receiverId = id;
+// 			getElement(id, by.id).className = "list-group-item active";
+// 			loadPrivateChat();
+// 		}
+// 	}
+// }
 
 // function loadPrivateChat() {
 // 	var chat_body = getElement("chat_body", by.id);
