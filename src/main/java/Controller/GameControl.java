@@ -52,8 +52,8 @@ public class GameControl {
     }
 
     public void start() {
-        game1 = new Game(player1);
-        game2 = new Game(player2);
+        game1 = new Game(player1, player2);
+        game2 = new Game(player2, player1);
         thread1 = new Thread(game1);
         thread2 = new Thread(game2);
         thread1.start();
@@ -97,10 +97,11 @@ class Game implements Runnable {
 
     // spawn
     private Tower guard1, guard2, king;
-    private final Player player;
+    private final Player player, enemy;
 
-    public Game(Player player) {
+    public Game(Player player, Player enemy) {
         this.player = player;
+        this.enemy = enemy;
     }
 
     public void stop() {
@@ -114,7 +115,7 @@ class Game implements Runnable {
 
     @Override
     public void run() {
-        init(player);
+        init(player, enemy);
         running = true;
         long wait;
 
@@ -132,11 +133,11 @@ class Game implements Runnable {
         }
     }
 
-    private void init(Player player) {
+    private void init(Player player, Player enemy) {
         resetChoice(player);
 
         // Tower
-        listOfTower = listOfTowerFromJson(player);
+        listOfTower = listOfTowerFromJson(enemy);
         king = listOfTower.get(0);
         guard1 = listOfTower.get(1);
         guard2 = listOfTower.get(2);
@@ -254,7 +255,7 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -273,7 +274,7 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

@@ -43,10 +43,10 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         process(request, response);
     }
-    
+
     private void process(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // Call Servlet Context
         ServletContext sc = getServletContext();
 
@@ -83,7 +83,7 @@ public class UserController extends HttpServlet {
             if (p != null) {
                 if (p.getPassword().equals(password)) {
                     isLogin = true;
-                    
+
                     // Call session
                     HttpSession session = request.getSession();
                     session.setAttribute("player", p);

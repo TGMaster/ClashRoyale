@@ -93,18 +93,18 @@
 
     <div class="carousel slide" data-ride="carousel" id="carousel-1">
         <div class="carousel-inner" role="listbox">
-            <div class="item"><img class="img-responsive" src="assets/images/slide/1161401.jpg" alt="Slide Image"></div>
-            <div class="item"><img class="img-responsive" src="assets/images/slide/42d70adab7cd290131c582b1b775404b.jpg"
+            <div class="item"><img class="img-responsive" src="assets/images/slide/cr3.jpg" alt="Slide Image"></div>
+            <div class="item"><img class="img-responsive" src="assets/images/slide/cr1.jpg"
                                 alt="Slide Image"></div>
-            <div class="item"><img class="img-responsive" src="assets/images/slide/Counter-Strike-games-selfie-1885251.jpeg"
+            <div class="item"><img class="img-responsive" src="assets/images/slide/cr2.jpeg"
                                 alt="Slide Image"></div>
-            <div class="item"><img class="img-responsive" src="assets/images/slide/daniel-johnson-clutch.jpg"
+            <div class="item"><img class="img-responsive" src="assets/images/slide/cr3.jpg"
                                 alt="Slide Image"></div>
-            <div class="item"><img class="img-responsive" src="assets/images/slide/maxresdefault (4).jpg" alt="Slide Image">
+            <div class="item"><img class="img-responsive" src="assets/images/slide/cr4.jpg" alt="Slide Image">
             </div>
-            <div class="item active"><img class="img-responsive" src="assets/images/slide/v065cssvidh01.jpg"
+            <div class="item active"><img class="img-responsive" src="assets/images/slide/cr1.jpg"
                                         alt="Slide Image"></div>
-            <div class="item"><img class="img-responsive" src="assets/images/slide/xamhiy16swyy.jpg" alt="Slide Image">
+            <div class="item"><img class="img-responsive" src="assets/images/slide/cr6.jpg" alt="Slide Image">
             </div>
         </div>
     </div>
