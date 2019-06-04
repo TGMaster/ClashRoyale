@@ -261,7 +261,7 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -280,7 +280,7 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

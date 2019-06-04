@@ -25,7 +25,7 @@ public class PlayerService {
         // Read database
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\database.json")).getAsJsonObject();
+            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\database.json")).getAsJsonObject();
         } catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -50,7 +50,7 @@ public class PlayerService {
         // Read database
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\database.json")).getAsJsonObject();
+            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\database.json")).getAsJsonObject();
         } catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
