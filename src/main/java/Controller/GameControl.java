@@ -25,8 +25,9 @@ import java.util.Random;
  * @author S410U
  */
 public class GameControl {
+
     private Player player1, player2;
-    
+
     private Game game1;
     private Game game2;
     private Thread thread1;
@@ -61,16 +62,15 @@ public class GameControl {
     public void stop() {
         coordinator.start();
     }
-    
+
     // Received Cmd From Websocket
     public void deployTroop(String id, String team, String message) {
-        if (team.equals("enemy")) {
+        if (team.equals("team2")) {
             game2.deployTroop(id, message);
-        }
-        else {
+        } else {
             game1.deployTroop(id, message);
         }
-        
+
     }
 }
 
@@ -80,20 +80,19 @@ class Game implements Runnable {
     private final Random rand = new Random();
 
     // Websocket variable
-    private volatile HashMap<String, Integer> lane = new HashMap<>();
-    private volatile HashMap<String, Integer> choice = new HashMap<>();
+    private volatile int lane;
+    private volatile int choice;
 
     // contain all information troops
     private List<Troop> LeftLane = new ArrayList<>(); // contain player's troops in left (alive troops)
     private List<Troop> RightLane = new ArrayList<>(); // contain player's troops in right (alive troops)
     private List<Tower> listOfTower = new ArrayList<>(); // contain all information about towers
 
-    private final HashMap<String, List<Troop>> troopsDeployedLeft = new HashMap<>();
-    private final HashMap<String, List<Troop>> troopsDeployedRight = new HashMap<>();
-    private final HashMap<String, List<Tower>> towersOfPlayer = new HashMap<>();
+    private final List<Troop> troopsDeployedLeft = new ArrayList<>();
+    private final List<Troop> troopsDeployedRight = new ArrayList<>();
 
     // tower in turn
-    private final HashMap<String, List<Troop>> troopsForChoice = new HashMap<>(); // contain 3 different troops at anytime for player choose to
+    private final List<Troop> troopsForChoice = new ArrayList<>(); // contain 3 different troops at anytime for player choose to
 
     // spawn
     private Tower guard1, guard2, king;
@@ -108,8 +107,8 @@ class Game implements Runnable {
     }
 
     public void resetChoice(Player player) {
-        choice.clear();
-        lane.clear();
+        choice = -1;
+        lane = 0;
     }
 
     @Override
@@ -134,18 +133,15 @@ class Game implements Runnable {
 
     private void init(Player player) {
         resetChoice(player);
-        troopsForChoice.put(player.getId(), new ArrayList<Troop>());
-        troopsDeployedLeft.put(player.getId(), new ArrayList<Troop>());
-        troopsDeployedRight.put(player.getId(), new ArrayList<Troop>());
 
         // Tower
         listOfTower = listOfTowerFromJson(player);
-        towersOfPlayer.put(player.getId(), listOfTower);
+        king = listOfTower.get(0);
+        guard1 = listOfTower.get(1);
+        guard2 = listOfTower.get(2);
     }
 
     private void update(Player player) {
-        String id = player.getId();
-        king = towersOfPlayer.get(id).get(0);
         if (king.isAlive()) {
 
             // Regen Mana
@@ -153,59 +149,55 @@ class Game implements Runnable {
             PlayerManager.printToChat("mana", player.getId(), "" + player.getMana());
 
             // Add troops
-            if (troopsForChoice.get(id).size() < 3) {
+            if (troopsForChoice.size() < 3) {
                 addTroopsChoice(player);
             }
-            printTroopList(troopsForChoice.get(id), player);
+            printTroopList(troopsForChoice, player);
 
-            if (!choice.isEmpty() && choice.get(id) != null && choice.get(id) >= 0 && choice.get(id) <= 2) {
-                Troop t = troopsForChoice.get(id).get(choice.get(id));
+            if (choice >= 0 && choice <= 2) {
+                Troop t = troopsForChoice.get(choice);
                 if (player.spawnTroop(t)) { // if enough mana to spawn troop
-                    troopsForChoice.get(id).remove(t);
+                    troopsForChoice.remove(t);
 
-                    if (!lane.isEmpty()) {
-                        // Choose left lane
-                        if (lane.get(id) == 1) {
-                            // Add to list Left
-                            LeftLane.add(t);
-                            troopsDeployedLeft.get(id).add(t);
-                        } else if (lane.get(id) == 2) {
-                            // Add to list Right
-                            RightLane.add(t);
-                            troopsDeployedRight.get(id).add(t);
-                        }
+                    // Choose left lane
+                    if (lane == 1) {
+                        // Add to list Left
+                        LeftLane.add(t);
+                        troopsDeployedLeft.add(t);
+                    } else if (lane == 2) {
+                        // Add to list Right
+                        RightLane.add(t);
+                        troopsDeployedRight.add(t);
                     }
                 }
             }
 
-            if (!troopsDeployedLeft.isEmpty() && !troopsDeployedLeft.get(id).isEmpty() && troopsDeployedLeft.get(id) != null) {
-                guard1 = towersOfPlayer.get(id).get(1);
-                Troop troopLeft = troopsDeployedLeft.get(id).get(0); //Get first troop
+            if (!troopsDeployedLeft.isEmpty() && troopsDeployedLeft != null) {
+                Troop troopLeft = troopsDeployedLeft.get(0); //Get first troop
                 // Guard 1 is alive
                 if (guard1.isAlive()) {
                     guard1.attackTroop(troopLeft);
-                    checkAlive(troopsDeployedLeft.get(id));
-                    allTroopsAttack(troopsDeployedLeft.get(id), guard1);
+                    checkAlive(troopsDeployedLeft);
+                    allTroopsAttack(troopsDeployedLeft, guard1);
                 } // Guard 1 is dead
                 else {
                     king.attackTroop(troopLeft);
-                    checkAlive(troopsDeployedLeft.get(id));
-                    allTroopsAttack(troopsDeployedLeft.get(id), king);
+                    checkAlive(troopsDeployedLeft);
+                    allTroopsAttack(troopsDeployedLeft, king);
                 }
             }
-            if (!troopsDeployedLeft.isEmpty() && !troopsDeployedRight.get(id).isEmpty() && troopsDeployedRight.get(id) != null) {
-                guard2 = towersOfPlayer.get(id).get(2);
-                Troop troopRight = troopsDeployedRight.get(id).get(0); //Get first troop
+            if (!troopsDeployedLeft.isEmpty() && !troopsDeployedRight.isEmpty() && troopsDeployedRight != null) {
+                Troop troopRight = troopsDeployedRight.get(0); //Get first troop
                 // Guard 2 is alive
                 if (guard2.isAlive()) {
                     guard2.attackTroop(troopRight);
-                    checkAlive(troopsDeployedRight.get(id));
-                    allTroopsAttack(troopsDeployedRight.get(id), guard2);
+                    checkAlive(troopsDeployedRight);
+                    allTroopsAttack(troopsDeployedRight, guard2);
                 } // Guard 2 is dead
                 else {
                     king.attackTroop(troopRight);
-                    checkAlive(troopsDeployedRight.get(id));
-                    allTroopsAttack(troopsDeployedRight.get(id), king);
+                    checkAlive(troopsDeployedRight);
+                    allTroopsAttack(troopsDeployedRight, king);
                 }
             }
 
@@ -239,10 +231,10 @@ class Game implements Runnable {
         do {
             int randnumber = rand.nextInt(dataTroops.size());
             Troop troop = dataTroops.get(randnumber);
-            if (!troopsForChoice.get(id).contains(troop)) {
-                troopsForChoice.get(id).add(troop);
+            if (!troopsForChoice.contains(troop)) {
+                troopsForChoice.add(troop);
             }
-        } while (troopsForChoice.get(id).size() < 3);
+        } while (troopsForChoice.size() < 3);
     }
 
     private void printTroopList(List<Troop> listOfTroop, Player player) {
@@ -261,7 +253,7 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\S410U\\Documents\\Projects\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -280,7 +272,7 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\S410U\\Documents\\Projects\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -298,7 +290,7 @@ class Game implements Runnable {
     // Received Cmd From Websocket
     public void deployTroop(String id, String message) {
         String[] msg = message.split(",");
-        choice.put(id, Integer.parseInt(msg[0]));
-        lane.put(id, Integer.parseInt(msg[1]));
+        choice = Integer.parseInt(msg[0]);
+        lane = Integer.parseInt(msg[1]);
     }
 }

@@ -11,6 +11,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
@@ -25,7 +26,7 @@ public class PlayerService {
         // Read database
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\database.json")).getAsJsonObject();
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\S410U\\Documents\\Projects\\ClashRoyale\\src\\main\\resources\\database.json")).getAsJsonObject();
         } catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -47,10 +48,12 @@ public class PlayerService {
 
     public Player findPlayerByUsername(String username) {
         Player p = new Player();
+        String filepath = new File(".").getAbsolutePath();
+        System.out.println("File: " + filepath);
         // Read database
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\database.json")).getAsJsonObject();
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\S410U\\Documents\\Projects\\ClashRoyale\\src\\main\\resources\\database.json")).getAsJsonObject();
         } catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -115,7 +115,7 @@
         var allowPublicChat = true;
 
     </script>
-    <script src="chat.js"></script>
+    <script src="assets/js/chat.js"></script>
     <script type="text/javascript">
         start();
     </script>
