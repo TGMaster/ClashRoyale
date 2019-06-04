@@ -20,7 +20,6 @@ var by = {
 	tag: "TagName",
 	class: "ClassName"
 };
-var userTeam;
 
 function onOpen(event) {/*Session created.*/
 }
@@ -43,11 +42,6 @@ function onMessage(event) {
 	var response = JSON.parse(event.data);
 	//If new user entered chat room, notify online friends and update friends list
 	if (response.action === actions._JOIN) {
-		if (response.team === "team1") {
-			userTeam = "team1";
-		} else {
-			userTeam = "team2";
-		}
 		updateUserList(response);
 	}
 	//If new user left chat room, notify others and update users list
@@ -63,7 +57,7 @@ function onMessage(event) {
 		}
 
 		liClasses = "list-item text-wrap " + display;
-		spanClasses = "badge badge-danger badge-pill";
+		spanClasses = "label label-danger";
 		extraLiAttributes = "";
 		extraSpanAttributes = "";
 		template = prepareMessageTemplate(
@@ -89,19 +83,14 @@ function onMessage(event) {
 	if (response.action === actions._COMMAND) {
 		display = "show";
 
-		if (receiverId > 0) {
-			//make upcoming message invisible if sender is not in chat with receiver
-			display = "hide";
-			alert("Public message from " + getSenderName(response.id));
-		}
 		var senderName;
 		if (response.id === userId || response.name === "") {
 			display += " text-right";
 			senderName = "Me";
-			spanClasses = "badge badge-secondary badge-pill";
+			spanClasses = "label label-default";
 		} else {
 			senderName = response.name;
-			spanClasses = "badge badge-primary badge-pill";
+			spanClasses = "label label-primary";
 		}
 		liClasses = "list-item text-wrap " + display;
 		extraLiAttributes = "";
@@ -125,7 +114,12 @@ function onMessage(event) {
 		getElement("troops", by.id).innerHTML = response.message;
 	}
 	if (response.action === actions._TEAM) {
-		
+		if (response.team) {
+			userTeam = "team1";
+		} else {
+			userTeam = "team2";
+		}
+		console.log(userId + " " + userTeam);
 	}
 
 	setChatScrollPos();
@@ -158,7 +152,7 @@ function leaveChat() {
 
 function sendRequest(request) {
 	if (webSocket === undefined || webSocket.readyState === WebSocket.CLOSED) {
-		alert("Connection lost to Server. Please try again later.");
+		updateChatBox("Connection lost to Server. Please try again later.");
 		return;
 	}
 	webSocket.send(JSON.stringify(request));
@@ -171,7 +165,7 @@ function updateUserList(user) {
 			display = "hide";
 		}
 		var liClasses = "list-item text-wrap " + display;
-		var spanClasses = "badge badge-success badge-pill";
+		var spanClasses = "label label-success";
 		var extraLiAttributes = "";
 		var extraSpanAttributes = "";
 		var template = prepareMessageTemplate(
@@ -246,6 +240,7 @@ function sendMessage() {
 		return;//if public chat is false and no receiver is selected, don't send message
 	}
 	var request;
+	console.log(userTeam);
 	request = {
 		action: actions._COMMAND,
 		id: userId,

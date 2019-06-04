@@ -97,13 +97,6 @@
     </div>
     <script src="assets/js/jquery-3.2.1.js"></script>
     <script type="text/javascript">
-        function getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
-        }
-    </script>
-    <script type="text/javascript">
 
         // WebSocket Config
 
@@ -111,6 +104,7 @@
         var socketUrl = "ws://localhost:8080/room";
         var userId = "<%=player.getId()%>";
         var userName = "<%=player.getUsername()%>";
+        var userTeam;
         var userListHeight = screen.height;
         var allowPublicChat = true;
 

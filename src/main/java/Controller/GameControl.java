@@ -26,7 +26,8 @@ import java.util.Random;
  */
 public class GameControl {
 
-    private Player player1, player2;
+    private final Player player1;
+    private final Player player2;
 
     private Game game1;
     private Game game2;
@@ -64,11 +65,11 @@ public class GameControl {
     }
 
     // Received Cmd From Websocket
-    public void deployTroop(String id, String team, String message) {
+    public void deployTroop(String team, String message) {
         if (team.equals("team2")) {
-            game2.deployTroop(id, message);
+            game2.deployTroop(message);
         } else {
-            game1.deployTroop(id, message);
+            game1.deployTroop(message);
         }
 
     }
@@ -186,7 +187,7 @@ class Game implements Runnable {
                     allTroopsAttack(troopsDeployedLeft, king);
                 }
             }
-            if (!troopsDeployedLeft.isEmpty() && !troopsDeployedRight.isEmpty() && troopsDeployedRight != null) {
+            if (!troopsDeployedRight.isEmpty() && troopsDeployedRight != null) {
                 Troop troopRight = troopsDeployedRight.get(0); //Get first troop
                 // Guard 2 is alive
                 if (guard2.isAlive()) {
@@ -253,7 +254,7 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\S410U\\Documents\\Projects\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -272,7 +273,7 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\S410U\\Documents\\Projects\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\TGMaster\\Documents\\Projects\\ClashRoyale\\towerandtroop.json"))
                     .getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -288,7 +289,7 @@ class Game implements Runnable {
     }
 
     // Received Cmd From Websocket
-    public void deployTroop(String id, String message) {
+    public void deployTroop(String message) {
         String[] msg = message.split(",");
         choice = Integer.parseInt(msg[0]);
         lane = Integer.parseInt(msg[1]);

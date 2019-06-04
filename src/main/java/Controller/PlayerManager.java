@@ -7,6 +7,7 @@ package Controller;
 
 import Util.Constant;
 import Entity.Player;
+import Service.PlayerService;
 import Socket.Server;
 
 import com.google.gson.JsonObject;
@@ -27,6 +28,8 @@ public class PlayerManager {
     public final static List<Player> PLAYERS = new ArrayList<Player>();
     public final static HashMap<String, Session> playerSession = new HashMap<String, Session>();
     private final static HashMap<String, Boolean> team1 = new HashMap<>();
+    
+    private final static PlayerService playerService = new PlayerService();
 
     private static GameControl game;
 
@@ -40,6 +43,7 @@ public class PlayerManager {
         }
         PLAYERS.add(player);
         playerSession.put(player.getId(), session);
+        sendTeam(player.getId());
         announceAll(Constant.JOIN, player.getId(), "has joined");
     }
 
@@ -77,16 +81,23 @@ public class PlayerManager {
         JsonObject addMessage = new JsonObject();
         addMessage.addProperty("action", action);
         addMessage.addProperty("id", id);
-        addMessage.addProperty("team", team1.get(id));
         addMessage.addProperty("message", message);
         if (id.equals("-1")) {
             addMessage.addProperty("name", "Server");
         } else {
-            Player player = getUserById(id);
+            Player player = playerService.findPlayerById(id);
             if (player != null) {
                 addMessage.addProperty("name", player.getUsername());
             }
         }
+        return addMessage;
+    }
+    
+    private static JsonObject teamMessage(String id) {
+        JsonObject addMessage = new JsonObject();
+        addMessage.addProperty("action", Constant.TEAM);
+        addMessage.addProperty("id", id);
+        addMessage.addProperty("team", team1.get(id));
         return addMessage;
     }
 
@@ -126,7 +137,7 @@ public class PlayerManager {
             if (message.contains("spawn")) {
                 System.out.println("Spawn troop");
                 message = message.replace("spawn:", "");
-                game.deployTroop(id, team, message);
+                game.deployTroop(team, message);
             }
         }
         for (Player p : PLAYERS) {
@@ -153,5 +164,10 @@ public class PlayerManager {
         for (Player p : PLAYERS) {
             sendToSession(playerSession.get(p.getId()), messageJson);
         }
+    }
+    
+    public static void sendTeam(String id) {
+        JsonObject messageJson = teamMessage(id);
+        sendToSession(playerSession.get(id), messageJson);
     }
 }

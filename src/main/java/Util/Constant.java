@@ -13,4 +13,5 @@ public interface Constant {
     public static final String JOIN = "join";
     public static final String LEAVE = "leave";
     public static final String COMMAND = "cmd";
+    public static final String TEAM = "team";
 }
