@@ -9,6 +9,7 @@ import Entity.Player;
 import Entity.Tower;
 import Entity.Troop;
 
+import Util.Constant;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -85,8 +86,6 @@ class Game implements Runnable {
     private volatile int choice;
 
     // contain all information troops
-    private List<Troop> LeftLane = new ArrayList<>(); // contain player's troops in left (alive troops)
-    private List<Troop> RightLane = new ArrayList<>(); // contain player's troops in right (alive troops)
     private List<Tower> listOfTower = new ArrayList<>(); // contain all information about towers
 
     private final List<Troop> troopsDeployedLeft = new ArrayList<>();
@@ -148,7 +147,7 @@ class Game implements Runnable {
 
             // Regen Mana
             player.regenMana();
-            PlayerManager.printToChat("mana", player.getId(), "" + player.getMana());
+            PlayerManager.printToChat(Constant.MANA, player.getId(), "" + player.getMana());
 
             // Add troops
             if (troopsForChoice.size() < 3) {
@@ -164,17 +163,15 @@ class Game implements Runnable {
                     // Choose left lane
                     if (lane == 1) {
                         // Add to list Left
-                        LeftLane.add(t);
                         troopsDeployedLeft.add(t);
                     } else if (lane == 2) {
                         // Add to list Right
-                        RightLane.add(t);
                         troopsDeployedRight.add(t);
                     }
                 }
             }
 
-            if (!troopsDeployedLeft.isEmpty() && troopsDeployedLeft != null) {
+            if (!troopsDeployedLeft.isEmpty()) {
                 Troop troopLeft = troopsDeployedLeft.get(0); //Get first troop
                 // Guard 1 is alive
                 if (guard1.isAlive()) {
@@ -188,7 +185,7 @@ class Game implements Runnable {
                     allTroopsAttack(troopsDeployedLeft, king);
                 }
             }
-            if (!troopsDeployedRight.isEmpty() && troopsDeployedRight != null) {
+            if (!troopsDeployedRight.isEmpty()) {
                 Troop troopRight = troopsDeployedRight.get(0); //Get first troop
                 // Guard 2 is alive
                 if (guard2.isAlive()) {
@@ -205,7 +202,7 @@ class Game implements Runnable {
 
         } else {
 //            System.out.println("End Game");
-            running = false;
+            PlayerManager.printToChatAll(Constant.GAMEOVER, player.getUsername() + "is winner");
         }
     }
 
@@ -247,7 +244,7 @@ class Game implements Runnable {
         for (Troop t : listOfTroop) {
             message += count++ + " : " + t.toString() + "<br>";
         }
-        PlayerManager.printToChat("troops", player.getId(), message);
+        PlayerManager.printToChat(Constant.TROOPS, player.getId(), message);
     }
 
     private List<Troop> listOfTroopsFromJson() {

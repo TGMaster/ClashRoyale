@@ -13,7 +13,8 @@ var actions = {
 	_COMMAND: "cmd",
 	_MANA: "mana",
 	_TROOPS: "troops",
-	_TEAM: "team"
+	_TEAM: "team",
+	_GAMEOVER: "gameover"
 };
 var by = {
 	id: "Id",
@@ -108,7 +109,7 @@ function onMessage(event) {
 	}
 	if (response.action === actions._MANA) {
 		// Mana
-		getElement("mana", by.id).style.width = parseInt(response.message)*10 + '%';
+		getElement("mana", by.id).style.width = parseInt(response.message) * 10 + '%';
 	}
 	if (response.action === actions._TROOPS) {
 		getElement("troops", by.id).innerHTML = response.message;
@@ -119,7 +120,33 @@ function onMessage(event) {
 		} else {
 			userTeam = "team2";
 		}
-		console.log(userId + " " + userTeam);
+	}
+	if (response.action === actions._GAMEOVER) {
+		var senderName = response.name;
+		spanClasses = "label label-warning";
+		liClasses = "list-item text-wrap ";
+		extraLiAttributes = "";
+		extraSpanAttributes = "";
+
+		template = prepareMessageTemplate(
+			liClasses,
+			spanClasses,
+			extraLiAttributes,
+			extraSpanAttributes,
+			senderName,
+			response.message);
+
+		updateChatBox(template);
+
+		// Stop thread
+		var request;
+		request = {
+			action: actions._COMMAND,
+			id: userId,
+			team: userTeam,
+			message: "stop"
+		};
+		sendRequest(request);
 	}
 
 	setChatScrollPos();
@@ -240,7 +267,6 @@ function sendMessage() {
 		return;//if public chat is false and no receiver is selected, don't send message
 	}
 	var request;
-	console.log(userTeam);
 	request = {
 		action: actions._COMMAND,
 		id: userId,

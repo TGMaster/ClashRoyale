@@ -14,4 +14,7 @@ public interface Constant {
     public static final String LEAVE = "leave";
     public static final String COMMAND = "cmd";
     public static final String TEAM = "team";
+    public static final String GAMEOVER = "gameover";
+    public static final String TROOPS = "troops";
+    public static final String MANA = "mana";
 }
