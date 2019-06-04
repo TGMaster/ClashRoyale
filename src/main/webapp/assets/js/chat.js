@@ -14,7 +14,8 @@ var actions = {
 	_MANA: "mana",
 	_TROOPS: "troops",
 	_TEAM: "team",
-	_GAMEOVER: "gameover"
+	_GAMEOVER: "gameover",
+	_TIMELEFT: "timeleft"
 };
 var by = {
 	id: "Id",
@@ -141,12 +142,13 @@ function onMessage(event) {
 		// Stop thread
 		var request;
 		request = {
-			action: actions._COMMAND,
-			id: userId,
-			team: userTeam,
+			action: actions._GAMEOVER,
 			message: "stop"
 		};
 		sendRequest(request);
+	}
+	if (response.action === actions._TIMELEFT) {
+		getElement("timeleft", by.id).innerHTML = response.message;
 	}
 
 	setChatScrollPos();

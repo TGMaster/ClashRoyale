@@ -17,4 +17,5 @@ public interface Constant {
     public static final String GAMEOVER = "gameover";
     public static final String TROOPS = "troops";
     public static final String MANA = "mana";
+    public static final String TIMELEFT = "timeleft";
 }

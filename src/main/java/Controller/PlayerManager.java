@@ -130,10 +130,10 @@ public class PlayerManager {
                 game = new GameControl(player1, player2);
                 game.start();
             }
-            if (message.equals("stop")) {
-                System.out.println("Stop Game");
-                game.stop();
-            }
+//            if (message.equals("stop")) {
+//                System.out.println("Stop Game");
+//                game.stop();
+//            }
             if (message.contains("spawn")) {
                 System.out.println("Spawn troop");
                 message = message.replace("spawn:", "");
@@ -143,6 +143,10 @@ public class PlayerManager {
         for (Player p : PLAYERS) {
             sendToSession(playerSession.get(p.getId()), messageJson);
         }
+    }
+
+    public static void stopGame() {
+        game.stop();
     }
 
     public static void printToChatAll(String action, String message) {

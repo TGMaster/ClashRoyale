@@ -58,7 +58,6 @@
 
 <body onbeforeunload="return closeSocket()">
     <%
-        boolean isLogin = false;
         Player player = (Player) session.getAttribute("player");
     %>
     <div class="container">
@@ -86,9 +85,12 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12">Mana:
+            <div class="col-sm-12">Time left: <span id="timeleft"></span></div>
+            <div class="col-sm-1">Mana</div>
+            <div class="col-sm-11">
                 <div class="progress">
-                    <div id="mana" class="progress-bar progress-bar-danger progress-bar-striped active" style="width:0%;"></div>
+                    <div id="mana" class="progress-bar progress-bar-danger progress-bar-striped active"
+                        style="width:0%;"></div>
                 </div>
             </div>
             <div class="col-sm-12">Troops: <p><span id="troops"></span></p>

@@ -80,6 +80,7 @@ class Game implements Runnable {
 
     private volatile boolean running;
     private final Random rand = new Random();
+    private int timeleft = 180, minutes, seconds; // 3 minutes
 
     // Websocket variable
     private volatile int lane;
@@ -120,7 +121,7 @@ class Game implements Runnable {
         // Loop
         while (running) {
             update(player);
-            wait = 2000;
+            wait = 1000;
             resetChoice(player);
 
             try {
@@ -142,10 +143,19 @@ class Game implements Runnable {
     }
 
     private void update(Player player) {
-        if (king.isAlive()) {
+        if (king.isAlive() && timeleft > 0) {
+
+            //Timeleft
+            timeleft--;
+            minutes = timeleft / 60;
+            seconds = timeleft % 60;
+            String str = String.format("%d:%02d", minutes, seconds);
+            PlayerManager.printToChat(Constant.TIMELEFT, player.getId(), str);
+
 
             // Regen Mana
-            player.regenMana();
+            if (timeleft % 2 == 0)
+                player.regenMana();
             PlayerManager.printToChat(Constant.MANA, player.getId(), "" + player.getMana());
 
             // Add troops
@@ -201,7 +211,7 @@ class Game implements Runnable {
 
         } else {
 //            System.out.println("End Game");
-            PlayerManager.printToChatAll(Constant.GAMEOVER, player.getUsername() + "is winner");
+            PlayerManager.printToChatAll(Constant.GAMEOVER, "GAME IS OVER");
         }
     }
 

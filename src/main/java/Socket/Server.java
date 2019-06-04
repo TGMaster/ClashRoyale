@@ -68,6 +68,9 @@ public class Server {
             cmdGame(json);
             System.out.println("A client just sent a message");
         }
+        if (Constant.GAMEOVER.equals(json.get("action").getAsString())) {
+            stopGame();
+        }
     }
 
     @OnClose
@@ -94,5 +97,9 @@ public class Server {
         String msg = json.get("message").getAsString();
         String team = json.get("team").getAsString();
         PlayerManager.receiveCmd(id, team, msg);
+    }
+
+    private void stopGame() {
+        PlayerManager.stopGame();
     }
 }
