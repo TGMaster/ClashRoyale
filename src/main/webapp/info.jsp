@@ -25,11 +25,11 @@
         %>
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container-fluid">
-                
+
             </div>
         </div>
-        
-        
+
+
         <p>ID: <%=player.getId()%></p>
         <p>Name: <%=player.getName()%></p>
         <p>URL: <a href="<%=player.getUrl()%>"><%=player.getUrl()%></a></p>
@@ -40,7 +40,7 @@
         <% } else {%>
         <a href="users?action=login"><img src="images/steam/sits_01.png"></a>
             <% }%>
-        
+
         <script src="css/bootstrap/js/bootstrap.min.js"></script>
     </body>
 </html>

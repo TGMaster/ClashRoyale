@@ -28,7 +28,7 @@ public class PlayerManager {
     public final static List<Player> PLAYERS = new ArrayList<Player>();
     public final static HashMap<String, Session> playerSession = new HashMap<String, Session>();
     private final static HashMap<String, Boolean> team1 = new HashMap<>();
-    
+
     private final static PlayerService playerService = new PlayerService();
 
     private static GameControl game;
@@ -92,7 +92,7 @@ public class PlayerManager {
         }
         return addMessage;
     }
-    
+
     private static JsonObject teamMessage(String id) {
         JsonObject addMessage = new JsonObject();
         addMessage.addProperty("action", Constant.TEAM);
@@ -169,7 +169,7 @@ public class PlayerManager {
             sendToSession(playerSession.get(p.getId()), messageJson);
         }
     }
-    
+
     public static void sendTeam(String id) {
         JsonObject messageJson = teamMessage(id);
         sendToSession(playerSession.get(id), messageJson);
