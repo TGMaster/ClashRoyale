@@ -262,8 +262,8 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
-                    .getAsJsonObject();
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\S410U\\Documents\\Projects\\ClashRoyale\\src\\main\\resources\\towerandtroop.json")).getAsJsonObject();
+            //jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json")).getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -281,8 +281,8 @@ class Game implements Runnable {
         Gson gson = new Gson();
         JsonObject jsonObject = null;
         try {
-            jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json"))
-                    .getAsJsonObject();
+            jsonObject = new JsonParser().parse(new FileReader("C:\\Users\\S410U\\Documents\\Projects\\ClashRoyale\\src\\main\\resources\\towerandtroop.json")).getAsJsonObject();
+            //jsonObject = new JsonParser().parse(new FileReader("D:\\WORK\\GitHub\\ClashRoyale\\src\\main\\resources\\towerandtroop.json")).getAsJsonObject();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

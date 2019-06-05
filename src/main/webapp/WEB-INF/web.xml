@@ -8,6 +8,14 @@
         <servlet-name>UserController</servlet-name>
         <url-pattern>/user</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>RoomController</servlet-name>
+        <servlet-class>Controller.RoomController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RoomController</servlet-name>
+        <url-pattern>/battle</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30

@@ -9,51 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <style type="text/css">
-        .show {
-            display: inline-block;
-        }
-
-        .hide {
-            display: none;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0px;
-            margin: 0px;
-        }
-
-        ul li {
-            padding: 5px 10px;
-            display: inline-block;
-            word-wrap: break-word;
-        }
-
-        #users_list {
-            /*height: 300px;*/
-            overflow: auto;
-        }
-
-        #users_list a {
-            padding: 5px;
-        }
-
-        #panel_body {
-            margin-bottom: 5px;
-            height: 300px;
-            overflow-y: auto;
-        }
-
-        .btn-send {
-            padding: 6px 31px !important;
-        }
-
-        input {
-            border-width: 0 0 1px 0 !important;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/game.css">
 </head>
 
 <body onbeforeunload="return closeSocket()">
@@ -94,6 +50,33 @@
                 </div>
             </div>
             <div class="col-sm-12">Troops: <p><span id="troops"></span></p>
+            </div>
+
+            <!-- Battle Button -->
+            <div class="couche1" id="red1">
+
+                <div class="couche2" id="red2">
+
+                    <div class="couche23" id="red23">
+
+                        <div class="couche3" id="red3">
+
+                            <div class="couche4" id="red4">
+
+                                <span class="battle" id="battle_red">Battle</span>
+
+                                <div class="couche5" id="red5">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
         </div>
     </div>

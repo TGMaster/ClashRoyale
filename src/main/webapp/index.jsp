@@ -47,8 +47,8 @@
                 <div class="collapse navbar-collapse" id="navcol-1">
                     <% if (isLogin) {%>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a class="btn btn-default action-button" role="button" href="game.jsp" id="play"><i
-                                    class="fa fa-play" style="font-size:15px;"></i> <strong>PLAY</strong></a></li>
+                        <li><a class="btn btn-default action-button" role="button" href="battle" id="play"><i
+                                    class="fa fa-play" style="font-size:15px;"></i> <strong>BATTLE</strong></a></li>
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#"
                                 style="color:rgb(255,255,255);font-size:14px;">
